@@ -40,56 +40,63 @@ variable "skip_metadata_api_check" {
   default     = true
 }
 
+# =========================================
+# NETWORK CIDR CONFIGURATION
+# =========================================
+
 variable "vpc_cidr" {
   description = "CIDR block cho VPC"
   type        = string
   default     = "10.0.0.0/16"
 }
 
-variable "public_subnet_a_cidr" {
-  description = "CIDR cho Public Subnet A"
-  type        = string
-  default     = "10.0.1.0/24"
-}
-
-variable "public_subnet_b_cidr" {
-  description = "CIDR cho Public Subnet B"
-  type        = string
-  default     = "10.0.2.0/24"
-}
-
-variable "private_subnet_a_cidr" {
-  description = "CIDR for private subnet A"
-  type        = string
-  default     = "10.0.11.0/24"
-}
-
-variable "private_subnet_b_cidr" {
-  description = "CIDR for private subnet B"
-  type        = string
-  default     = "10.0.12.0/24"
-}
-
-variable "private_subnet_database_cidr" {
-  description = "CIDR for private subnet Database"
-  type        = string
-  default     = "10.0.21.0/24"
-}
-
-variable "private_subnet_database_b_cidr" {
-  description = "CIDR for private subnet Database B"
-  type        = string
-  default     = "10.0.22.0/24"
-}
-
 variable "az_a" {
-  description = "Availability Zone cho Subnet A"
+  description = "Availability Zone cho AZ A"
   type        = string
   default     = "ap-southeast-1a"
 }
 
 variable "az_b" {
-  description = "Availability Zone cho Subnet B"
+  description = "Availability Zone cho AZ B"
   type        = string
   default     = "ap-southeast-1b"
+}
+
+# Public Subnets (Tier 1)
+variable "public_subnet_a_cidr" {
+  description = "CIDR cho Public Subnet AZ-A"
+  type        = string
+  default     = "10.0.1.0/24"
+}
+
+variable "public_subnet_b_cidr" {
+  description = "CIDR cho Public Subnet AZ-B"
+  type        = string
+  default     = "10.0.2.0/24"
+}
+
+# Private App Subnets (Tier 2)
+variable "private_app_subnet_a_cidr" {
+  description = "CIDR cho Private App Subnet AZ-A"
+  type        = string
+  default     = "10.0.11.0/24"
+}
+
+variable "private_app_subnet_b_cidr" {
+  description = "CIDR cho Private App Subnet AZ-B"
+  type        = string
+  default     = "10.0.12.0/24"
+}
+
+# Database Subnets (Tier 3 - Isolated)
+variable "database_subnet_a_cidr" {
+  description = "CIDR cho Database Subnet AZ-A"
+  type        = string
+  default     = "10.0.21.0/24"
+}
+
+variable "database_subnet_b_cidr" {
+  description = "CIDR cho Database Subnet AZ-B"
+  type        = string
+  default     = "10.0.22.0/24"
 }
