@@ -9,14 +9,14 @@ Mục tiêu: Đưa bạn từ nền tảng Software/Fullstack Developer lên v�
 
 ```
 [Level 1: Core Networking & Linux CLI]
-├── lab01-vpc-multi-tier          <-- (ĐANG HỌC)
-├── lab02-security-groups-nacl
-└── lab03-vpc-endpoints-cost-opt
+├── lab01-vpc-multi-tier          <-- (Hoàn thành)
+├── lab02-security-groups-nacl    <-- (Hoàn thành)
+└── lab03-vpc-endpoints-cost-opt  <-- (Hoàn thành)
 
 [Level 2: Production Infrastructure as Code (IaC)]
-├── lab04-terraform-modules
-├── lab05-state-management-remote
-└── lab06-security-linters
+├── lab04-terraform-modules       <-- (Hoàn thành)
+├── lab05-state-management-remote <-- (Hoàn thành)
+└── lab06-security-linters        <-- (Hoàn thành)
 
 [Level 3: Container & AWS EKS (Kubernetes)]
 ├── lab07-docker-security

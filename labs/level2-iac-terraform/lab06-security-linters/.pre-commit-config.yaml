@@ -1,0 +1,37 @@
+# .pre-commit-config.yaml
+# Tự động hóa kiểm tra an ninh và chuẩn hóa code tại máy trạm lập trình viên (Local Git Hooks)
+# Cài đặt: pip install pre-commit && pre-commit install
+
+repos:
+  # 1. Bộ kiểm tra chuẩn định dạng và cú pháp chung
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+
+  # 2. Bộ kiểm tra chuyên sâu cho Terraform (antonbabenko/pre-commit-terraform)
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.88.0
+    hooks:
+      # Tự động format code HCL chuẩn chỉ (terraform fmt)
+      - id: terraform_fmt
+
+      # Chạy TFLint với file cấu hình .tflint.hcl của dự án
+      - id: terraform_tflint
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
+
+      # Chạy Checkov kiểm tra chính sách an ninh CIS Benchmark
+      - id: terraform_checkov
+        args:
+          - --args=--compact
+          - --args=--config-file=__GIT_WORKING_DIR__/.checkov.yaml
+
+      # Chạy Trivy kiểm tra lỗ hổng cấu hình và lộ lọt secret
+      - id: terraform_trivy
+        args:
+          - --args=--severity=CRITICAL,HIGH
+          - --args=--ignorefile=__GIT_WORKING_DIR__/.trivyignore

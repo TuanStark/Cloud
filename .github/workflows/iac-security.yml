@@ -1,0 +1,65 @@
+name: "IaC DevSecOps Security Gate"
+
+# Kích hoạt khi có Pull Request vào nhánh main hoặc push lên main
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "**.tf"
+      - "**.hcl"
+      - ".tflint.hcl"
+      - ".checkov.yaml"
+      - ".trivyignore"
+  push:
+    branches: [ "main" ]
+    paths:
+      - "**.tf"
+      - "**.hcl"
+
+jobs:
+  iac-security-gate:
+    name: "Static Analysis & Security Quality Gate"
+    runs-on: ubuntu-latest
+
+    steps:
+      # Bước 1: Kéo toàn bộ source code từ repository về máy runner của GitHub
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # Bước 2: Thiết lập Terraform CLI để kiểm tra format
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.0
+
+      - name: Check Terraform Formatting (terraform fmt -check)
+        run: terraform fmt -check -recursive
+
+      # Bước 3: Kiểm tra quy chuẩn AWS Provider bằng TFLint
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Initialize & Run TFLint
+        run: |
+          tflint --init --config=labs/level2-iac-terraform/lab06-security-linters/.tflint.hcl
+          tflint --config=labs/level2-iac-terraform/lab06-security-linters/.tflint.hcl --recursive
+
+      # Bước 4: Quét chính sách an ninh Policy-as-Code bằng Checkov (CIS Benchmarks)
+      - name: Run Checkov Security Scanner
+        uses: bridgecrewio/checkov-action@master
+        with:
+          config_file: labs/level2-iac-terraform/lab06-security-linters/.checkov.yaml
+          framework: terraform
+          output_format: cli
+          soft_fail: false # QUAN TRỌNG: Trả về exit code 1 khi có lỗi an ninh để KHÓA MERGE PR
+
+      # Bước 5: Quét lỗ hổng cấu hình và lộ lọt mật khẩu bằng Trivy
+      - name: Run Trivy Vulnerability & Misconfig Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          exit-code: '1' # Dừng pipeline nếu phát hiện lỗi CRITICAL hoặc HIGH
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true

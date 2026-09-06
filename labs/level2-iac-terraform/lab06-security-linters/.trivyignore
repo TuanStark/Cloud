@@ -1,0 +1,10 @@
+# .trivyignore
+# Danh sách các mã vi phạm an ninh được phê duyệt ngoại lệ (Risk Acceptance) có kiểm toán
+
+# 1. Bỏ qua cảnh báo Egress 0.0.0.0/0 trên Security Group:
+# Lý do: Máy chủ EC2 private cần kết nối HTTPS (port 443) ra ngoài Internet qua NAT Gateway để cập nhật bản vá bảo mật OS từ official repository.
+AVD-AWS-0104
+
+# 2. Bỏ qua yêu cầu bắt buộc Customer Managed KMS Key (CMK) cho S3 Data Lake môi trường Dev:
+# Lý do: Môi trường thử nghiệm sử dụng SSE-S3 AES256 mặc định để tối ưu chi phí API calls (FinOps).
+AVD-AWS-0132

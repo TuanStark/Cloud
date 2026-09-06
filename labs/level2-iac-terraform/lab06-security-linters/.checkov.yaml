@@ -1,0 +1,24 @@
+# .checkov.yaml
+# Cấu hình tập trung cho Checkov Scanner (Policy-as-Code) trong dự án
+
+# Chỉ định framework cần quét
+framework:
+  - terraform
+
+# Hiển thị kết quả ngắn gọn, dễ đọc
+compact: true
+
+# Không in ra quá nhiều thông tin debug không cần thiết
+quiet: false
+
+# soft-fail: false có nghĩa là nếu có bất kỳ lỗi an ninh nào, Checkov sẽ trả về mã lỗi (exit code != 0)
+# để CHẶN đứng CI/CD pipeline hoặc Git commit
+soft-fail: false
+
+# Thư mục hoặc đường dẫn mặc định cần quét
+directory:
+  - .
+
+# Nếu có các rule an ninh đặc thù cần bỏ qua ở cấp độ toàn dự án (kèm lý do phê duyệt), có thể bỏ comment ở dưới:
+# skip-check:
+#   - CKV_AWS_144 # Bỏ qua yêu cầu S3 Cross-Region Replication cho môi trường phi production
