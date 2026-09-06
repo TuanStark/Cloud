@@ -1,0 +1,97 @@
+# ==============================================================================
+# TERRAFORM ARTIFACTS & STATE
+# ==============================================================================
+# Thư mục plugin và cache nội bộ của Terraform (dung lượng rất lớn, hàng trăm MB)
+**/.terraform/*
+**/.terraform/
+
+# File State lưu trữ hạ tầng (CỰC KỲ NGUY HIỂM vì chứa plaintext mật khẩu, private key)
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfstate.lock.info
+
+# Crash logs khi terraform gặp sự cố
+crash.log
+crash.*.log
+
+# Các file cấu hình override nội bộ
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# File cấu hình Terraform CLI cục bộ
+.terraformrc
+terraform.rc
+
+# Các file biến nhạy cảm hoặc tự động nạp
+*.auto.tfvars
+*.auto.tfvars.json
+*secret*.tfvars
+*secrets*.tfvars
+
+# LƯU Ý QUAN TRỌNG: Không ignore file `.terraform.lock.hcl` 
+# File này cần được commit để đảm bảo cả team dùng chung phiên bản provider chính xác.
+
+# ==============================================================================
+# CLOUD CREDENTIALS & SENSITIVE KEYS (BẢO MẬT ZERO-TRUST)
+# ==============================================================================
+# AWS credentials tải về từ Console
+.aws/
+*accessKeys.csv
+*credentials*.json
+
+# SSH Keys, TLS Certificates, Private Keys (Tuyệt đối không đẩy lên Git)
+*.pem
+*.key
+*.pkcs12
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+id_rsa.pub
+id_ed25519.pub
+
+# File môi trường chứa API Key / DB Password
+.env
+.env.*
+!.env.example
+
+# Kubernetes config (chứa cluster cert và admin token)
+kubeconfig
+*.kubeconfig
+.kube/
+
+# ==============================================================================
+# HỆ ĐIỀU HÀNH & TRÌNH SOẠN THẢO (OS & IDE)
+# ==============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+*.swp
+*.swo
+
+# IDE & Editor
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Logs & Temporary files
+*.log
+*.tmp
+tmp/
+scratch/
