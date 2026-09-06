@@ -19,7 +19,7 @@ Mục tiêu: Đưa bạn từ nền tảng Software/Fullstack Developer lên v�
 └── lab06-security-linters        <-- (Hoàn thành)
 
 [Level 3: Container & AWS EKS (Kubernetes)]
-├── lab07-docker-security
+├── lab07-docker-security        <-- (Hoàn thành)
 ├── lab08-aws-eks-terraform
 └── lab09-ingress-tls-irsa
 
