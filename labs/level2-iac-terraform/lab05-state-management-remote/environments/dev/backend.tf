@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket                      = "tuanstark-tfstate-f8m8ns"
+    bucket                      = "tuanstark-tfstate-t1i0ql"
     key                         = "dev/terraform.tfstate"
-    region                      = "ap-southeast-1"
+    region                      = "us-east-1"
     dynamodb_table              = "tuanstark-tfstate-locks"
     encrypt                     = true
     skip_credentials_validation = true
