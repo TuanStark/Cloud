@@ -25,7 +25,7 @@ locals {
 }
 
 resource "aws_eks_addon" "core" {
-  for_each = toset(local.core_addons)
+  for_each = var.enable_addons ? toset(local.core_addons) : toset([])
 
   cluster_name = aws_eks_cluster.this.name
   addon_name   = each.value

@@ -55,3 +55,8 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+variable "enable_addons" {
+  type        = bool
+  description = "Bật/tắt cài đặt EKS Add-ons (tắt khi chạy trên emulator Floci do chưa hỗ trợ API Addon)"
+  default     = false
+}
