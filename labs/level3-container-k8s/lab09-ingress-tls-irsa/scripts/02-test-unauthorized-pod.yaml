@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-irsa-unauthorized
+  namespace: order-app
+spec:
+  restartPolicy: Never
+  containers:
+    - name: aws-cli
+      image: amazon/aws-cli:latest
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "=== THỬ TRUY CẬP S3 TỪ POD KHÔNG ĐƯỢC PHÉP ==="
+          aws s3 ls || echo "BỊ CHẶN TRUY CẬP THÀNH CÔNG (AccessDenied)!"

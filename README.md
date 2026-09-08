@@ -20,8 +20,8 @@ Mục tiêu: Đưa bạn từ nền tảng Software/Fullstack Developer lên v�
 
 [Level 3: Container & AWS EKS (Kubernetes)]
 ├── lab07-docker-security        <-- (Hoàn thành)
-├── lab08-aws-eks-terraform
-└── lab09-ingress-tls-irsa
+├── lab08-aws-eks-terraform      <-- (Hoàn thành)
+└── lab09-ingress-tls-irsa       <-- (Hoàn thành)
 
 [Level 4: DevSecOps CI/CD Pipeline]
 ├── lab10-github-actions-security

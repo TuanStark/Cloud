@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-app-deployment
+  namespace: order-app
+  labels:
+    app: order-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order-app
+  template:
+    metadata:
+      labels:
+        app: order-app
+    spec:
+    # Gắn ServiceAccount để sử dụng IRSA
+      serviceAccountName: order-app-sa
+  
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      
+      # Volume cho /tmp
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
+
+      containers:
+        - name: app
+          image: nginxinc/nginx-unprivileged:alpine   # Non-root image, lắng nghe port 8080
+          ports:
+            - containerPort: 8080
+              name: http
+
+          # Container-level Security Context
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp   # Gắn emptyDir vào /tmp
+
+          # (Tùy chọn) Có thể thêm readiness/liveness probe nếu cần
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 8080
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 10
