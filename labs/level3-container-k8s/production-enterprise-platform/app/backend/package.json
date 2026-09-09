@@ -1,0 +1,14 @@
+{
+  "name": "enterprise-order-backend",
+  "version": "2.0.0",
+  "description": "Enterprise Order Service with S3 IRSA integration & Graceful Shutdown",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.600.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Order Service - Container Security Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="icon">🛡️</span>
+        <div>
+          <h1>DevSecOps Order Service</h1>
+          <p class="subtitle">Giám sát An ninh Runtime & Quản lý Đơn hàng</p>
+        </div>
+      </div>
+      <div class="header-status">
+        <span class="pulse-indicator"></span>
+        <span id="connection-status">Đang kết nối Backend...</span>
+      </div>
+    </header>
+
+    <!-- Security Monitor Banner -->
+    <section class="card security-card" id="security-panel">
+      <div class="card-header">
+        <h2>🔒 Container Runtime Security Status</h2>
+        <span id="security-badge" class="badge badge-warning">Đang kiểm tra...</span>
+      </div>
+      <div class="security-grid">
+        <div class="stat-box">
+          <span class="stat-label">User UID</span>
+          <span class="stat-value mono" id="sec-uid">--</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">User GID</span>
+          <span class="stat-value mono" id="sec-gid">--</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Username</span>
+          <span class="stat-value mono" id="sec-user">--</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Container Hostname</span>
+          <span class="stat-value mono" id="sec-hostname">--</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Memory RSS</span>
+          <span class="stat-value mono" id="sec-memory">-- MB</span>
+        </div>
+      </div>
+      <div class="security-alert" id="security-alert-box">
+        <span class="alert-icon">⚠️</span>
+        <p id="security-message">Đang lấy dữ liệu an ninh từ container...</p>
+      </div>
+    </section>
+
+    <!-- Order Management Section -->
+    <div class="main-grid">
+      <!-- Create Order Form -->
+      <section class="card">
+        <h2>📦 Tạo Đơn Hàng Mới</h2>
+        <form id="order-form">
+          <div class="form-group">
+            <label for="customer">Tên Khách Hàng</label>
+            <input type="text" id="customer" placeholder="Ví dụ: Lê Công Tuấn" required>
+          </div>
+          <div class="form-group">
+            <label for="item">Sản Phẩm Cloud</label>
+            <input type="text" id="item" placeholder="Ví dụ: AWS EKS Terraform Cluster" required>
+          </div>
+          <div class="form-group">
+            <label for="amount">Giá Trị ($ USD)</label>
+            <input type="number" id="amount" placeholder="Ví dụ: 150" min="1" required>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btn-submit">
+            <span>+ Tạo Đơn Hàng</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- Order List -->
+      <section class="card">
+        <div class="card-header">
+          <h2>📋 Danh Sách Đơn Hàng (<span id="order-count">0</span>)</h2>
+          <button class="btn btn-secondary btn-sm" id="btn-refresh">🔄 Làm mới</button>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mã ĐH</th>
+                <th>Khách Hàng</th>
+                <th>Sản Phẩm</th>
+                <th>Giá ($)</th>
+                <th>Trạng Thái</th>
+              </tr>
+            </thead>
+            <tbody id="order-list">
+              <tr>
+                <td colspan="5" class="text-center">Đang tải dữ liệu...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
