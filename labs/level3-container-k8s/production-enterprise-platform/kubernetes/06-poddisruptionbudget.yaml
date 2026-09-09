@@ -1,0 +1,22 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: backend-pdb
+  namespace: production-ecommerce
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: order-backend
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: frontend-pdb
+  namespace: production-ecommerce
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: order-frontend

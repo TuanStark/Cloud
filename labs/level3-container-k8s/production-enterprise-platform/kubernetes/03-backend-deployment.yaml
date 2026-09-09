@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-backend
+  namespace: production-ecommerce
+  labels:
+    app: order-backend
+    tier: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order-backend
+  template:
+    metadata:
+      labels:
+        app: order-backend
+        tier: api
+    spec:
+      serviceAccountName: order-backend-sa
+
+      # 1. ÉP BUỘC PHÂN BỔ ĐA VÙNG (MULTI-AZ HIGH AVAILABILITY)
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: order-backend
+
+      # 2. POD-LEVEL SECURITY CONTEXT (CIS BENCHMARK)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
+
+      containers:
+        - name: backend
+          image: ecommerce-backend:hardened-v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+              name: http
+
+          # 3. CONTAINER-LEVEL SECURITY CONTEXT
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+
+          volumeMounts:
+            - name: tmp-volume
+              mountPath: /tmp
+
+          env:
+            - name: PORT
+              value: "5000"
+            - name: S3_BUCKET_NAME
+              value: "company-invoices-prod"
+            - name: AWS_REGION
+              value: "us-east-1"
+
+          # 4. RESOURCE ALLOCATION (QOS BURSTABLE)
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+
+          # 5. HEALTH PROBES
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 2
+
+          # 6. ZERO-DOWNTIME PRESTOP HOOK
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 5"]

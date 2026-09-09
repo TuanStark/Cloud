@@ -1,0 +1,50 @@
+# 1. Khóa toàn bộ Ingress traffic mặc định (Default Deny)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all-ingress
+  namespace: production-ecommerce
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+
+---
+# 2. Cho phép traffic từ Ingress vào Frontend Pods (Port 8080)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-frontend
+  namespace: production-ecommerce
+spec:
+  podSelector:
+    matchLabels:
+      app: order-frontend
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 8080
+
+---
+# 3. Chỉ cho phép Frontend gọi sang Backend (Micro-segmentation)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: production-ecommerce
+spec:
+  podSelector:
+    matchLabels:
+      app: order-backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: order-frontend
+      ports:
+        - protocol: TCP
+          port: 5000
