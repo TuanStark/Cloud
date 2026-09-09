@@ -1,3 +1,18 @@
+module "eks" {
+  source = "../../modules/eks"
+
+  cluster_name   = var.cluster_name
+  vpc_id         = aws_vpc.this.id
+  subnet_ids     = aws_subnet.private[*].id
+  scaling_config = var.scaling_config
+  enable_addons  = false # Floci chưa hỗ trợ EKS Addon API
+
+  tags = merge(var.tags, {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+  })
+}
+
 module "s3" {
   source = "../../modules/s3-invoice"
 
@@ -15,3 +30,4 @@ module "irsa" {
   service_account_name = var.service_account_name
   s3_bucket_arn        = module.s3.bucket_arn
 }
+

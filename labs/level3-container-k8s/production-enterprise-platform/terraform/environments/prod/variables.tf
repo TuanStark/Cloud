@@ -27,3 +27,24 @@ variable "service_account_name" {
   description = "Tên ServiceAccount được cấp quyền IRSA"
   default     = "order-backend-sa"
 }
+
+variable "scaling_config" {
+  description = "Cấu hình scaling cho node group (desired, min, max)"
+  type = object({
+    desired_size = number
+    min_size     = number
+    max_size     = number
+  })
+  default = {
+    desired_size = 3
+    min_size     = 2
+    max_size     = 5
+  }
+}
+
+variable "tags" {
+  description = "Tags áp dụng cho tất cả tài nguyên"
+  type        = map(string)
+  default     = {}
+}
+
