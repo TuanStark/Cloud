@@ -403,6 +403,11 @@ spec:
 - **Sự cố:** Một Pod chạy ứng dụng demo của intern sử dụng thư viện log dính lỗ hổng Log4j / RCE. Hacker chiếm quyền shell của Pod này. Từ Pod đó, hacker dùng lệnh `nmap` quét toàn bộ dải mạng `10.0.0.0/16` của cụm, tìm thấy cổng `5000` của Backend thanh toán và cổng `5432` của Database nội bộ vốn không có mật khẩu mạnh. Toàn bộ cơ sở dữ liệu bị mã hóa đòi tiền chuộc!
 - **Khắc phục:** Kích hoạt ngay lập tức bộ quy tắc **Micro-segmentation NetworkPolicy**: Default Deny toàn bộ, chỉ cho phép luồng dữ liệu hợp lệ duy nhất từ Frontend -> Backend. Hacker dù có chiếm được một Pod cũng bị nhốt trong "căn phòng kín", không thể gửi bất kỳ gói tin nào sang Pod bên cạnh.
 
+### 💀 Horror Story 4: Thảm Họa "Terraform Destroy" Nhầm Production Vì Dùng Chung Thư Mục Phẳng (Flat State)
+- **Bối cảnh:** Một công ty khởi nghiệp cấu hình toàn bộ hạ tầng AWS trong cùng một thư mục Terraform phẳng (`s3.tf`, `iam.tf`, `rds.tf`) và dùng biến `var.environment` hoặc `terraform workspace` để chuyển đổi giữa Dev và Prod.
+- **Sự cố:** Một kỹ sư DevOps mới vào nghề muốn dọn dẹp môi trường Dev để tiết kiệm chi phí trước kỳ nghỉ lễ. Anh ta gõ `terraform destroy -auto-approve`, nhưng trong terminal đang vô tình trỏ biến môi trường `TF_WORKSPACE=prod` (hoặc quên truyền file `dev.tfvars`). Chỉ trong vòng **3 phút**, toàn bộ S3 bucket dữ liệu giao dịch và IAM Roles của hệ thống Production bị xóa sổ hoàn toàn!
+- **Khắc phục:** Tuyệt đối cấm dùng thư mục phẳng cho nhiều môi trường. Bắt buộc tách biệt cấu trúc thư mục vật lý: `modules/` (chứa logic trừu tượng dùng chung) và `environments/dev/`, `environments/prod/` (chứa state độc lập, backend S3 bucket độc lập, quyền IAM riêng biệt). Người làm việc ở Dev dù có xóa nhầm cũng 100% không thể chạm tới Production (Giới hạn Blast Radius).
+
 ---
 
 ## 💡 Bảng Đối Chiếu Tư Duy Toàn Diện
@@ -418,3 +423,5 @@ spec:
 | **Dừng Tiến Trình** | Để K8s bắn `SIGKILL` làm rớt request | `preStop: sleep 5` + Graceful Shutdown rút IP an toàn |
 | **Tự Động Co Giãn** | Canh me bằng tay để tăng replicas | **HPA v2** tự động co giãn theo ngưỡng CPU 70% / Mem 80% |
 | **Định Tuyến Ingress** | Dùng NodePort hoặc mở nhiều cổng rời rạc | **L7 Ingress Path-based Routing** + TLS 1.3 qua chung 1 domain |
+| **Kiến Trúc Terraform** | Thư mục phẳng chung 1 state, dùng ternary condition | **Directory Isolation + Reusable Modules** (`environments/dev`, `prod`) |
+

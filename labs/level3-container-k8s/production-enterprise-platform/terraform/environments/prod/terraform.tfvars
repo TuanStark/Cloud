@@ -1,0 +1,5 @@
+region               = "us-east-1"
+environment          = "prod"
+cluster_name         = "ecommerce-production"
+namespace            = "production-ecommerce"
+service_account_name = "order-backend-sa"

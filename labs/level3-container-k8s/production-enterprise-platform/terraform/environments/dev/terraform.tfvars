@@ -1,0 +1,5 @@
+region               = "us-east-1"
+environment          = "dev"
+cluster_name         = "ecommerce-dev"
+namespace            = "dev-ecommerce"
+service_account_name = "order-backend-dev-sa"
