@@ -28,3 +28,14 @@ output "node_group_arn" {
   value       = module.eks.node_group_arn
 }
 
+output "worker_node_instance_ids" {
+  description = "Danh sách ID các máy ảo Worker Node thực tế được tạo"
+  value       = module.eks.worker_node_instance_ids
+}
+
+output "worker_node_private_ips" {
+  description = "Danh sách Private IP của các máy ảo Worker Node"
+  value       = module.eks.worker_node_private_ips
+}
+
+

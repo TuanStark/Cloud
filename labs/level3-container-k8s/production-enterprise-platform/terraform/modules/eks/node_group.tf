@@ -71,3 +71,22 @@ resource "aws_eks_node_group" "this" {
     Name = "${var.cluster_name}-default-ng"
   }
 }
+
+# ==============================================================================
+# 3. Tài nguyên 3: Tự động khởi chạy Worker Node Instances (EC2 thực tế)
+# ==============================================================================
+resource "aws_instance" "workers" {
+  count         = var.scaling_config.desired_size
+  ami           = "ami-0abcdef1234567890" # Amazon Linux 2 EKS AMI
+  instance_type = var.node_instance_types[0]
+  subnet_id     = var.subnet_ids[count.index % length(var.subnet_ids)]
+  vpc_security_group_ids = [aws_security_group.node.id]
+  iam_instance_profile   = aws_iam_instance_profile.node_group.name
+
+  tags = {
+    Name                                        = "${var.cluster_name}-worker-${count.index + 1}"
+    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    "eks:nodegroup-name"                        = "${var.cluster_name}-default-ng"
+  }
+}
+

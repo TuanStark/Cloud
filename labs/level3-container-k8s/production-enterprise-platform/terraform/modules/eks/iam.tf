@@ -59,3 +59,9 @@ resource "aws_iam_role_policy_attachment" "node_group" {
   policy_arn = each.value
   role       = aws_iam_role.node_group.name
 }
+
+resource "aws_iam_instance_profile" "node_group" {
+  name = "${var.cluster_name}-node-instance-profile"
+  role = aws_iam_role.node_group.name
+}
+

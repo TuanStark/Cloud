@@ -38,3 +38,14 @@ output "node_group_arn" {
   value       = aws_eks_node_group.this.arn
 }
 
+output "worker_node_instance_ids" {
+  description = "Danh sách ID các máy ảo Worker Node thực tế được tạo"
+  value       = aws_instance.workers[*].id
+}
+
+output "worker_node_private_ips" {
+  description = "Danh sách Private IP của các máy ảo Worker Node"
+  value       = aws_instance.workers[*].private_ip
+}
+
+
