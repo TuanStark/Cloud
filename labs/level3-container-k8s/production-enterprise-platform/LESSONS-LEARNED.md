@@ -424,4 +424,91 @@ spec:
 | **Tự Động Co Giãn** | Canh me bằng tay để tăng replicas | **HPA v2** tự động co giãn theo ngưỡng CPU 70% / Mem 80% |
 | **Định Tuyến Ingress** | Dùng NodePort hoặc mở nhiều cổng rời rạc | **L7 Ingress Path-based Routing** + TLS 1.3 qua chung 1 domain |
 | **Kiến Trúc Terraform** | Thư mục phẳng chung 1 state, dùng ternary condition | **Directory Isolation + Reusable Modules** (`environments/dev`, `prod`) |
+| **Phân Tách Vòng Đời** | Nhồi nhét cả K8s YAML vào Terraform để apply chung | Tách rạch ròi Day 0/1 (Terraform dựng Node) & Day 2 (kubectl/GitOps chạy Pod) |
+
+---
+
+## 6. Mắt Xích Kiến Trúc Sống Còn: Mối Quan Hệ Giữa Terraform (Day 0/1) Và Kubernetes (Day 2)
+
+### ❓ Bí Ẩn: "Tại sao trong `node_group.tf` không có dòng nào gọi thư mục `kubernetes/`?"
+Một hiểu lầm kinh điển của kỹ sư mới chuyển dịch sang Cloud-Native là: *"Nghĩ rằng Terraform là công cụ sẽ tự động đọc và thực thi luôn các file YAML trong thư mục `kubernetes/`"*.
+
+Thực tế: **Trong Terraform HOÀN TOÀN KHÔNG CÓ bất kỳ dòng code nào gọi đến thư mục `kubernetes/`!**
+
+```text
++---------------------------------------------------------------------------------+
+| GIAI ĐOẠN 1: TERRAFORM (Hạ Tầng Vật Lý / Day 0 - Day 1)                        |
+| Nhiệm vụ: Xây "sân vận động" (VPC, Subnet, EKS Control Plane, Worker Nodes EC2).|
+| 👉 Terraform DỪNG LẠI sau khi máy ảo EC2 đã chạy và có Kubelet chờ sẵn.        |
++---------------------------------------------------------------------------------+
+                                      ⬇ (Bàn giao Kubeconfig)
++---------------------------------------------------------------------------------+
+| GIAI ĐOẠN 2: KUBECTL / GITOPS (Ứng Dụng Nghiệp Vụ / Day 2)                      |
+| Nhiệm vụ: Đưa "cầu thủ" vào sân đá bóng (Chạy Pods Backend, Frontend, Ingress). |
+| 👉 Thực thi bằng lệnh: kubectl apply -f kubernetes/                             |
++---------------------------------------------------------------------------------+
+```
+
+---
+
+### 🏢 Ẩn Dụ Thực Tế: "Toà Nhà Văn Phòng & Đội Ngũ Nhân Viên"
+- **Terraform (Công ty xây dựng):**
+  - Xây toà nhà, kéo đường điện nước (**VPC, Subnets, NAT Gateway**).
+  - Lập Ban Quản Lý toà nhà ngồi phòng điều hành (**EKS Control Plane**).
+  - Lắp đặt các dãy bàn ghế, máy tính sẵn sàng (**Worker Nodes EC2 trong `node_group.tf`**).
+  - Xây kho chứa hồ sơ bảo mật (**S3 Bucket**).
+  - Làm sẵn phôi thẻ quẹt thang máy an ninh (**IAM Role IRSA**).
+- **Thư mục `kubernetes/` (Đội ngũ nhân sự & Nội quy):**
+  - Khai báo phòng ban và nội quy an toàn PSS Restricted (`00-namespace.yaml`).
+  - Cấp thẻ nhân viên quẹt vào kho S3 (`01-serviceaccount.yaml`).
+  - Cửa từ bảo vệ chống người lạ xâm nhập (`02-networkpolicy.yaml`).
+  - **Nhân viên lập trình và lễ tân (`03-backend` & `04-frontend`):** Chính là các Pods. Nhân viên muốn làm việc thì **bắt buộc phải ngồi vào các bàn ghế (Worker Nodes)** mà công ty xây dựng đã đóng sẵn!
+  - Lễ tân đón khách từ cổng chính toà nhà (`07-ingress.yaml`).
+
+---
+
+### 🏷️ "Chiếc Thẻ Tên" Kép Nối Hai Thế Giới: `kubernetes.io/cluster = owned`
+Trong file `modules/eks/node_group.tf`, đoạn code mấu chốt:
+```hcl
+resource "aws_instance" "workers" {
+  ...
+  tags = {
+    Name = "${var.cluster_name}-worker-${count.index + 1}"
+    # 👇 CHIẾC THẺ TÊN ĐỊNH DANH SINH TỬ
+    "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+    "eks:nodegroup-name"                        = "${var.cluster_name}-default-ng"
+  }
+}
+```
+1. Khi máy ảo EC2 khởi động, tiến trình **`kubelet`** chạy ngầm trong máy ảo sẽ đọc thẻ tag này.
+2. Nó biết cụm EKS của nó tên là gì, gửi gói tin TLS Handshake về Control Plane xin gia nhập.
+3. Control Plane phê duyệt -> Máy ảo EC2 chính thức biến thành **1 Node `Ready` trong cụm**!
+
+---
+
+### 🎯 Ai Là Người Đưa Pods Lên Worker Nodes?
+Khi kỹ sư (hoặc CI/CD Pipeline) gõ lệnh:
+```bash
+kubectl apply -f kubernetes/
+```
+1. Lệnh này gửi toàn bộ YAML lên **API Server** của Control Plane.
+2. **K8s Scheduler** (Bộ lập lịch thông minh của Control Plane) nhìn thấy có 2 Worker Nodes đang rảnh rỗi.
+3. Scheduler tính toán:
+   - "Backend yêu cầu 2 replicas và chia đều Multi-AZ (`topologySpreadConstraints`)."
+   - Scheduler chỉ định: **Pod Backend 1 -> Worker Node 1**, **Pod Backend 2 -> Worker Node 2**.
+4. Kubelet trên từng Worker Node kéo Docker Image về và khởi chạy container!
+
+---
+
+### ⚠️ Tại Sao Tuyệt Đối KHÔNG Dùng Terraform Để Apply K8s YAML? (Anti-Pattern)
+Dù Terraform có provider `kubernetes`, nhưng ở môi trường Enterprise Production thực tế, việc nhồi YAML ứng dụng vào Terraform là **sai lầm nghiêm trọng**:
+1. **Vòng đời khác biệt hoàn toàn (Lifecycle Mismatch):**
+   - Hạ tầng Cloud (VPC, EKS, Node Group) vài tháng hoặc cả năm mới sửa 1 lần.
+   - Ứng dụng Backend/Frontend release **10-20 lần mỗi ngày**. Chạy Terraform mỗi lần release app sẽ cực kỳ chậm và rủi ro sập hạ tầng.
+2. **Bán Kính Sát Thương (Blast Radius):**
+   - Lập trình viên ứng dụng chỉ được cấp quyền deploy K8s Pods, tuyệt đối không được có quyền chạy `terraform apply` có thể vô tình xóa nhầm VPC hoặc Database.
+3. **Chuẩn GitOps Quốc Tế:**
+   - Hạ tầng quản lý riêng tại Git Repo `infra-terraform/` (Platform Team).
+   - Ứng dụng quản lý riêng tại Git Repo `app-workloads/` (Dev Team) và deploy tự động bằng ArgoCD hoặc GitHub Actions.
+
 
