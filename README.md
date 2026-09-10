@@ -24,7 +24,7 @@ Mục tiêu: Đưa bạn từ nền tảng Software/Fullstack Developer lên v�
 └── lab09-ingress-tls-irsa       <-- (Hoàn thành)
 
 [Level 4: DevSecOps CI/CD Pipeline]
-├── lab10-github-actions-security
+├── lab10-github-actions-security  <-- (Hoàn thành)
 ├── lab11-secrets-management
 └── lab12-gitops-argocd
 

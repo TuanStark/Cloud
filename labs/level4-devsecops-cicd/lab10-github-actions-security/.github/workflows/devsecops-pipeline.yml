@@ -1,0 +1,148 @@
+name: "Enterprise DevSecOps CI/CD Pipeline (5-Gate Quality Gate)"
+
+# =========================================================================
+# 🛡️ 5-STAGE DEVSECOPS PIPELINE WITH AUTOMATED SECURITY QUALITY GATES
+# =========================================================================
+# Philosophy: Shift-Left Security & Defense-in-Depth
+# Standard: CIS Docker Benchmarks, OWASP Top 10, NVD CVE Database
+# Author: Le Cong Tuan <tuanstark>
+# =========================================================================
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "labs/level4-devsecops-cicd/lab10-github-actions-security/**"
+      - ".github/workflows/devsecops-pipeline.yml"
+  push:
+    branches: [ "main" ]
+    paths:
+      - "labs/level4-devsecops-cicd/lab10-github-actions-security/**"
+
+# 🔒 LEAST-PRIVILEGE PERMISSIONS:
+# Chỉ cấp quyền đọc source code và ghi báo cáo an ninh lên tab GitHub Security
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  # =========================================================================
+  # GATE 1: SECRET SCANNING (Chặn rò rỉ API Keys, Tokens, Passwords)
+  # =========================================================================
+  gate-1-secret-scan:
+    name: "Gate 1: Secret Scanning"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Source Code"
+        uses: actions/checkout@v4
+
+      - name: "Run Trivy Secret Scanner"
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "labs/level4-devsecops-cicd/lab10-github-actions-security/sample-app"
+          scanners: "secret"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1" # Khóa merge PR nếu phát hiện Secret
+
+  # =========================================================================
+  # GATE 2: SAST (Static Application Security Testing - OWASP Top 10)
+  # =========================================================================
+  gate-2-sast-scan:
+    name: "Gate 2: SAST Code Analysis"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Source Code"
+        uses: actions/checkout@v4
+
+      - name: "Run SAST Static Analysis"
+        run: |
+          echo ">>> Auditing source code for OWASP Top 10 vulnerabilities..."
+          TARGET_DIR="labs/level4-devsecops-cicd/lab10-github-actions-security/sample-app"
+          
+          # Kiểm tra các Dangerous Sinks (SQLi ghép chuỗi, Command Exec, eval)
+          if grep -En "(child_process\.exec|eval\(|SELECT \* FROM.*= '\s*\+)" "${TARGET_DIR}/server.js"; then
+            echo "::error::Dangerous execution sinks detected in server.js! Injection risks found."
+            exit 1
+          fi
+          
+          # Xác thực việc kích hoạt HTTP Security Headers (Helmet)
+          if ! grep -q "helmet()" "${TARGET_DIR}/server.js"; then
+            echo "::error::Missing Helmet defense middleware in server.js!"
+            exit 1
+          fi
+          echo "✅ SAST code analysis passed without dangerous sinks."
+
+  # =========================================================================
+  # GATE 3: SCA (Software Composition Analysis - Third-Party CVEs)
+  # =========================================================================
+  gate-3-sca-scan:
+    name: "Gate 3: SCA Dependency Scan"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Source Code"
+        uses: actions/checkout@v4
+
+      - name: "Run Trivy SCA Dependency Scanner"
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "labs/level4-devsecops-cicd/lab10-github-actions-security/sample-app"
+          scanners: "vuln"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1" # Khóa merge PR nếu phát hiện thư viện dính CVE Critical/High
+
+  # =========================================================================
+  # GATE 4: IAC & DOCKERFILE LINTING (CIS Docker Benchmarks)
+  # =========================================================================
+  gate-4-iac-dockerfile-lint:
+    name: "Gate 4: Dockerfile & IaC Linting"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Source Code"
+        uses: actions/checkout@v4
+
+      - name: "Run Trivy Config Scanner (CIS Benchmarks)"
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "config"
+          scan-ref: "labs/level4-devsecops-cicd/lab10-github-actions-security/sample-app/Dockerfile"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1"
+
+  # =========================================================================
+  # GATE 5: CONTAINER IMAGE SCAN & SARIF EXPORT (OS Layer Vulnerabilities)
+  # =========================================================================
+  gate-5-container-image-scan:
+    name: "Gate 5: Container Image Scan & SARIF"
+    runs-on: ubuntu-latest
+    needs: [gate-1-secret-scan, gate-2-sast-scan, gate-3-sca-scan, gate-4-iac-dockerfile-lint]
+    steps:
+      - name: "Checkout Source Code"
+        uses: actions/checkout@v4
+
+      - name: "Set up Docker Buildx"
+        uses: docker/setup-buildx-action@v3
+
+      - name: "Build Production Hardened Image"
+        run: |
+          docker build \
+            -t payment-vault-api:${{ github.sha }} \
+            -f labs/level4-devsecops-cicd/lab10-github-actions-security/sample-app/Dockerfile \
+            labs/level4-devsecops-cicd/lab10-github-actions-security/sample-app
+
+      - name: "Scan Container Image with Trivy (SARIF Report)"
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "payment-vault-api:${{ github.sha }}"
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1" # Dừng pipeline nếu Docker Image dính lỗi OS Critical/High
+
+      - name: "Upload SARIF Report to GitHub Security Tab"
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() # Luôn tải lên báo cáo kể cả khi bị fail để Developer xem chi tiết
+        with:
+          sarif_file: "trivy-results.sarif"

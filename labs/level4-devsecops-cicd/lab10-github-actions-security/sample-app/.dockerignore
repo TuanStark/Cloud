@@ -1,0 +1,25 @@
+# Git & Version Control
+.git
+.gitignore
+
+# Dependencies & Build artifacts
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Secrets & Environment variables
+.env*
+*.pem
+*.key
+*.cert
+
+# Test & CI/CD
+tests
+*.test.js
+coverage
+.github
+
+# Documentation
+*.md
+Dockerfile*
+docker-compose*.yml

@@ -1,0 +1,11 @@
+{
+  "name": "payment-vault-api-vulnerable",
+  "version": "1.0.0",
+  "description": "Vulnerable fixture for testing Gate 3 (SCA Dependency Scanning)",
+  "dependencies": {
+    "axios": "0.21.1",
+    "express": "4.16.0",
+    "jsonwebtoken": "8.5.1",
+    "lodash": "4.17.20"
+  }
+}

@@ -1,0 +1,22 @@
+# =========================================================================
+# ⚠️ INSECURE DOCKERFILE - ANTI-PATTERN EXAMPLE (VIOLATES CIS BENCHMARKS)
+# =========================================================================
+# For testing Gate 4 (Dockerfile Linting) & Gate 5 (Container Image Scanning).
+#
+# LỖI BẢO MẬT TRONG FILE NÀY:
+# 1. User: Không khai báo USER -> Mặc định chạy dưới quyền ROOT (UID 0 - Vi phạm CIS Docker 4.1)
+# 2. Thiếu HEALTHCHECK -> Docker & K8s không thể tự động giám sát container (Vi phạm CIS Docker 4.6)
+# 3. Single Stage / Thiếu init process: Chạy trực tiếp "node server.js" dưới quyền root (PID 1)
+# 4. Không nâng cấp vá lỗi OS (bỏ qua apk upgrade) -> Để lộ các CVE hệ điều hành
+
+FROM node:20.18-alpine3.20
+
+WORKDIR /app
+
+# Copy toàn bộ mã nguồn vào mà không qua multi-stage
+COPY . /app
+
+EXPOSE 8080
+
+# Chạy trực tiếp dưới quyền ROOT và không có init process PID 1
+CMD ["node", "server-vulnerable.js"]
