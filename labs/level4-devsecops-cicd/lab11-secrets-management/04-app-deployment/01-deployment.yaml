@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-api-deployment
+  namespace: payment
+  labels:
+    app: payment-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: payment-api
+  template:
+    metadata:
+      labels:
+        app: payment-api
+    spec:
+      # 🛡️ ĐIỂM CỐT LÕI 1: Gán ServiceAccount có IAM Role IRSA
+      serviceAccountName: payment-app-sa
+
+      # 🛡️ ĐIỂM CỐT LÕI 2: Pod Security Context chuẩn CIS Benchmarks
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+
+      containers:
+      - name: payment-api
+        image: payment-vault-api:local-hardened # Image chuẩn chúng ta đã build ở Lab 10
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+
+        # 🛡️ ĐIỂM CỐT LÕI 3: Inject toàn bộ Secret từ External Secrets Operator vào biến môi trường
+        envFrom:
+        - secretRef:
+            name: payment-db-secret # Trùng khớp với target.name trong ExternalSecret
+
+        # Các biến môi trường bổ sung thông thường
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "8080"
+
+        # Container Security Context
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
+
+        # Giám sát sức khỏe
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 15
+
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"

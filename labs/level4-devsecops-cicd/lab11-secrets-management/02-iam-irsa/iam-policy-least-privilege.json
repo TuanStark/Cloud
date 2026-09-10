@@ -1,0 +1,22 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowGetPaymentSecretOnly",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret"
+            ],
+            "Resource": "arn:aws:secretsmanager:us-east-1:123456789012:secret:/prod/payment/db-credentials-*"
+        },
+        {
+            "Sid": "AllowDecryptWithSpecificKmsKeyOnly",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Decrypt"
+            ],
+            "Resource": "arn:aws:kms:us-east-1:123456789012:key/bc123456-789a-bcde-f012-3456789abcde"
+        }
+    ]
+}

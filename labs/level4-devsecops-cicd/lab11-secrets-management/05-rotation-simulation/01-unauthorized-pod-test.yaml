@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rogue-attacker-pod
+  namespace: default # Chạy ở namespace khác, không có quyền IRSA của payment
+  labels:
+    role: attacker
+spec:
+  # ❌ KHÔNG CÓ serviceAccountName: payment-app-sa (Dùng default SA)
+  containers:
+  - name: attacker-tools
+    image: amazon/aws-cli:latest
+    command: ["sleep", "3600"]
+    # ❌ Cố tình xin đọc secret của Payment nhưng sẽ bị K8s và AWS chặn đứng
