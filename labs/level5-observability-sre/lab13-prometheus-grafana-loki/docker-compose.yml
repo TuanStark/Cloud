@@ -1,0 +1,82 @@
+services:
+  # 1. Microservice Cổng thanh toán (Sinh Metrics & Logs)
+  payment-vault-app:
+    build:
+      context: ./04-app-simulator
+    container_name: payment-vault-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - shared-logs:/var/log/app
+    networks:
+      - obs-network
+
+  # 2. Prometheus Server (TSDB Metrics Collector)
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./01-prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - obs-network
+    depends_on:
+      - payment-vault-app
+
+  # 3. Grafana Loki (Log Aggregation Store)
+  loki:
+    image: grafana/loki:3.1.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./02-loki-promtail/loki-config.yml:/etc/loki/local-config.yaml:ro
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - obs-network
+
+  # 4. Promtail (Log Shipper)
+  promtail:
+    image: grafana/promtail:3.1.0
+    container_name: promtail
+    volumes:
+      - ./02-loki-promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - shared-logs:/var/log/containers:ro
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - obs-network
+    depends_on:
+      - loki
+
+  # 5. Grafana (SRE Dashboard Cockpit)
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./03-grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./03-grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./03-grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - obs-network
+    depends_on:
+      - prometheus
+      - loki
+
+volumes:
+  shared-logs:
+
+networks:
+  obs-network:
+    driver: bridge

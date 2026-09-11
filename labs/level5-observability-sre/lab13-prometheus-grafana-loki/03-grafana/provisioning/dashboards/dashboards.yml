@@ -1,0 +1,14 @@
+# =========================================================================
+# 📂 GRAFANA DASHBOARD PROVIDER CONFIGURATION
+# =========================================================================
+apiVersion: 1
+
+providers:
+  - name: 'Payment-Vault-Dashboards'
+    orgId: 1
+    folder: 'Payment Services'
+    type: file
+    disableDeletion: true
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards

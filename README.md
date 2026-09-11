@@ -29,7 +29,7 @@ Mục tiêu: Đưa bạn từ nền tảng Software/Fullstack Developer lên v�
 └── lab12-gitops-argocd           <-- (Hoàn thành)
 
 [Level 5: Observability & SRE (Xử lý sự cố)]
-├── lab13-prometheus-grafana-loki
+├── lab13-prometheus-grafana-loki  <-- (Hoàn thành)
 ├── lab14-alerting-slo-sli
 └── lab15-incident-rca-simulation
 ```

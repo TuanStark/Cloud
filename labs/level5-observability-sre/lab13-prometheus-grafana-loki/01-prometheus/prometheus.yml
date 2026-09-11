@@ -1,0 +1,31 @@
+# =========================================================================
+# 🔥 PROMETHEUS SCRAPE CONFIGURATION - ENTERPRISE BASELINE
+# =========================================================================
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'eks-production'
+    region: 'ap-southeast-1'
+
+scrape_configs:
+  # 1. Tự giám sát chính Prometheus Server
+  - job_name: 'prometheus'
+    scrape_interval: 15s
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          tier: 'monitoring-core'
+
+  # 2. Giám sát Microservice Thanh toán (Payment Vault API)
+  - job_name: 'payment-vault-service'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    metrics_path: '/metrics'
+    scheme: 'http'
+    static_configs:
+      - targets: ['payment-vault-app:8080']
+        labels:
+          environment: 'production'
+          app: 'payment-vault'
+          team: 'fintech-core'

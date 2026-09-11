@@ -1,0 +1,34 @@
+# =========================================================================
+# ☸️ KUBERNETES PROMETHEUS OPERATOR: SERVICE MONITOR CRD
+# Target: Production AWS EKS Cluster
+# =========================================================================
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: payment-vault-servicemonitor
+  namespace: monitoring
+  labels:
+    release: kube-prometheus-stack
+    app.kubernetes.io/part-of: payment-vault
+spec:
+  # 🎯 Khai báo namespace chứa Service đích cần giám sát
+  namespaceSelector:
+    matchNames:
+      - payment-prod
+      - payment-dev
+
+  # 🔍 Bộ lọc nhãn (Label Selector): Tìm các Service có nhãn này để tự động cào
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payment-vault-service
+
+  # ⚙️ Cấu hình endpoint lấy metrics
+  endpoints:
+    - port: http               # Khớp với tên port trong file service.yaml của Helm Chart
+      path: /metrics           # Đường dẫn endpoint OpenMetrics
+      interval: 10s            # Tần suất kéo metrics
+      scrapeTimeout: 5s
+      relabelings:
+        - action: keep
+          sourceLabels: [__meta_kubernetes_pod_phase]
+          regex: Running
