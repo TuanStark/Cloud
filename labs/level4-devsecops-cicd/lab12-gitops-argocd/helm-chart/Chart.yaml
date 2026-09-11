@@ -1,0 +1,9 @@
+apiVersion: v2
+name: payment-vault-service
+description: Enterprise Production Helm Chart for Payment Vault Microservice
+type: application
+version: 1.0.0       # Phiên bản của chính Helm Chart
+appVersion: "1.2.2"
+maintainers:
+  - name: Le Cong Tuan
+    email: lecontuan472004@gmail.com

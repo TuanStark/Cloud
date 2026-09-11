@@ -1,0 +1,69 @@
+# =========================================================================
+# 📦 BASE VALUES: Default configuration contract for Payment Vault
+# =========================================================================
+environment: "default"
+
+replicaCount: 1
+
+image:
+  repository: payment-vault-api
+  pullPolicy: IfNotPresent
+  tag: "1.2.2"
+
+serviceAccount:
+  create: true
+  name: "payment-vault-sa"
+  annotations: {} # Sẽ được ghi đè bằng IRSA Role ARN ở từng môi trường
+
+# 🛡️ CIS Docker & Kubernetes Benchmark Hardening
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+# 🛡️ Quản lý tài nguyên cơ sở
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+# 🛡️ Health Probes phục vụ ArgoCD Health Checks
+probes:
+  liveness:
+    path: /health
+    initialDelaySeconds: 15
+    periodSeconds: 20
+  readiness:
+    path: /health
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+# Biến môi trường ứng dụng
+env:
+  PORT: "8080"
+  NODE_ENV: "production"
+
+# Tích hợp Kubernetes Secret (từ External Secrets Operator ở Lab 11)
+secretRef:
+  enabled: true
+  name: "payment-db-secret"
+
+# 🛡️ PodDisruptionBudget: Mặc định tắt, chỉ bật ở Prod
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1

@@ -1,0 +1,30 @@
+# =========================================================================
+# 🛡️ PRODUCTION ENVIRONMENT VALUES (HIGH AVAILABILITY & RESILIENT)
+# =========================================================================
+environment: "prod"
+
+# High Availability: Chạy 3 Replicas chống sập khi có Node bị chết
+replicaCount: 3
+
+# Cấp phát tài nguyên cao đáp ứng tải giao dịch lớn
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+
+# Gán IRSA Role bảo mật cao cấp của PROD
+serviceAccount:
+  name: "payment-vault-prod-sa"
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/ProdPaymentSecretReaderRole
+
+env:
+  NODE_ENV: "production"
+
+# 🛡️ BẮT BUỘC Ở PROD: Đảm bảo luôn luôn có ít nhất 2 Pod sống khi K8s nâng cấp Node
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2

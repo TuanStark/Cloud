@@ -1,0 +1,28 @@
+# =========================================================================
+# 🧪 DEV ENVIRONMENT VALUES
+# =========================================================================
+environment: "dev"
+
+replicaCount: 1
+
+# Tài nguyên thấp giúp tiết kiệm chi phí DEV
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+# Gán IRSA Role riêng của DEV
+serviceAccount:
+  name: "payment-vault-dev-sa"
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/DevPaymentSecretReaderRole
+
+env:
+  NODE_ENV: "development"
+  DEBUG: "payment:*"
+
+podDisruptionBudget:
+  enabled: false

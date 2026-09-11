@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: payment-vault-dev
+  namespace: argocd
+  finalizers:
+    # 🛡️ Xóa Application sẽ dọn sạch tài nguyên trong cụm
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/TuanStark/Cloud.git'
+    targetRevision: main
+    path: labs/level4-devsecops-cicd/lab12-gitops-argocd/helm-chart
+    helm:
+      valueFiles:
+        - values-dev.yaml # Tự động nạp cấu hình DEV
+
+  destination:
+    server: 'https://kubernetes.default.svc' # Cụm EKS cục bộ
+    namespace: payment-dev                  # Triển khai vào namespace riêng của DEV
+
+  syncPolicy:
+    automated:
+      prune: true     # Tự động dọn dẹp tài nguyên bị xóa trên Git
+      selfHeal: true  # 🛡️ Tự động phục hồi khi bị sửa tay trên cụm (Anti-Drift)
+    syncOptions:
+      - CreateNamespace=true # Tự động tạo namespace payment-dev nếu chưa có

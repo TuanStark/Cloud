@@ -26,7 +26,7 @@ Mục tiêu: Đưa bạn từ nền tảng Software/Fullstack Developer lên v�
 [Level 4: DevSecOps CI/CD Pipeline]
 ├── lab10-github-actions-security  <-- (Hoàn thành)
 ├── lab11-secrets-management       <-- (Hoàn thành)
-└── lab12-gitops-argocd
+└── lab12-gitops-argocd           <-- (Hoàn thành)
 
 [Level 5: Observability & SRE (Xử lý sự cố)]
 ├── lab13-prometheus-grafana-loki

@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: payment-vault-prod
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/TuanStark/Cloud.git'
+    targetRevision: main
+    path: labs/level4-devsecops-cicd/lab12-gitops-argocd/helm-chart
+    helm:
+      valueFiles:
+        - values-prod.yaml # Tự động nạp cấu hình PROD (3 replicas, PDB enabled)
+
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: payment-prod                 # Triển khai vào namespace cô lập PROD
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true  # 🛡️ Chống Configuration Drift tuyệt đối trên Production
+    syncOptions:
+      - CreateNamespace=true
