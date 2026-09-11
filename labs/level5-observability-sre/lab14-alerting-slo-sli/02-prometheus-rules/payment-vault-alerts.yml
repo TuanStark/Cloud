@@ -1,0 +1,62 @@
+# =========================================================================
+# 🚨 PROMETHEUS ALERTING RULES: PAYMENT VAULT SERVICE
+# Target: Alertmanager Integration
+# =========================================================================
+groups:
+  - name: payment-vault-slo-alerts
+    # Tần suất đánh giá quy tắc trong nhóm
+    interval: 10s
+    rules:
+      # -------------------------------------------------------------------
+      # 🔴 ALERT 1: TOÀN BỘ MICROSERVICE BỊ CHẾT (SERVICE DOWN)
+      # -------------------------------------------------------------------
+      - alert: PaymentVaultDown
+        expr: up{job="payment-vault-service"} == 0
+        for: 15s
+        labels:
+          severity: critical
+          tier: payment-gateway
+          service: payment-vault
+        annotations:
+          summary: "🚨 Payment Vault Service is completely DOWN!"
+          description: "Instance {{ $labels.instance }} has been unreachable. Financial transactions are failing!"
+          runbook_url: "https://wiki.fintech.internal/runbooks/payment-vault-down"
+
+      # -------------------------------------------------------------------
+      # 🔴 ALERT 2: TỶ LỆ LỖI 5XX VƯỢT QUÁ NGƯỠNG CHO PHÉP (> 5%)
+      # -------------------------------------------------------------------
+      - alert: High5xxErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{app="payment-vault", status=~"5.."}[1m]))
+            /
+            sum(rate(http_requests_total{app="payment-vault"}[1m]))
+          ) * 100 > 5
+        for: 15s
+        labels:
+          severity: critical
+          tier: payment-gateway
+          service: payment-vault
+        annotations:
+          summary: "🚨 High 5xx Error Rate detected on Payment Vault (> 5%)"
+          description: "Current error rate is {{ $value | printf \"%.2f\" }}%, breaching the 99.9% Availability SLO threshold!"
+          runbook_url: "https://wiki.fintech.internal/runbooks/high-error-rate"
+
+      # -------------------------------------------------------------------
+      # 🟡 ALERT 3: ĐỘ TRỄ PHÂN VỊ P95 QUÁ CAO (> 500ms)
+      # -------------------------------------------------------------------
+      - alert: P95LatencyBreached
+        expr: |
+          histogram_quantile(
+            0.95, 
+            sum(rate(http_request_duration_seconds_bucket{app="payment-vault"}[1m])) by (le)
+          ) > 0.5
+        for: 2m
+        labels:
+          severity: warning
+          tier: payment-gateway
+          service: payment-vault
+        annotations:
+          summary: "⚠️ P95 Latency SLA Breached (> 500ms)"
+          description: "95% of payment transactions are taking {{ $value | printf \"%.3f\" }}s to process. Users experiencing degraded performance."
+          runbook_url: "https://wiki.fintech.internal/runbooks/high-latency"

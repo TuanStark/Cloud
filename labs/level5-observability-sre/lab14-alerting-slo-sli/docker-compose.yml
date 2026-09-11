@@ -1,0 +1,55 @@
+services:
+  # 1. Payment Vault App (Kèm Chaos API)
+  payment-vault-app:
+    build:
+      context: ./05-app-simulator
+    container_name: payment-vault-app-lab14
+    ports:
+      - "8081:8080" # Cổng ngoài 8081 để tránh trùng Lab 13
+    networks:
+      - alert-network
+
+  # 2. Prometheus (TSDB & Rule Evaluation Engine)
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus-lab14
+    ports:
+      - "9091:9090" # Cổng ngoài 9091 để tránh trùng Lab 13
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./02-prometheus-rules/payment-vault-alerts.yml:/etc/prometheus/rules/payment-vault-alerts.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - alert-network
+    depends_on:
+      - payment-vault-app
+
+  # 3. Alertmanager (Deduplication, Grouping & Routing)
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: alertmanager-lab14
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./03-alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    networks:
+      - alert-network
+
+  # 4. SRE Mock Alert Receiver (Webhook Collector)
+  alert-receiver:
+    build:
+      context: ./04-alert-receiver
+    container_name: alert-receiver-lab14
+    ports:
+      - "5001:5001"
+    networks:
+      - alert-network
+
+networks:
+  alert-network:
+    driver: bridge

@@ -1,0 +1,26 @@
+# =========================================================================
+# 🔥 PROMETHEUS CONFIGURATION WITH ALERTMANAGER & RULES
+# =========================================================================
+global:
+  scrape_interval: 10s
+  evaluation_interval: 10s
+
+# 🎯 Chỉ định nơi nhận cảnh báo (Alertmanager)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+# 📜 Chỉ định các tệp quy tắc cảnh báo
+rule_files:
+  - '/etc/prometheus/rules/payment-vault-alerts.yml'
+
+scrape_configs:
+  - job_name: 'payment-vault-service'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['payment-vault-app:8080']
+        labels:
+          environment: 'production'
+          app: 'payment-vault'
+          team: 'fintech-core'

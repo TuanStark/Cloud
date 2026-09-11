@@ -1,0 +1,72 @@
+# =========================================================================
+# 🎛️ ALERTMANAGER CONFIGURATION - ENTERPRISE ROUTING & DEDUPLICATION
+# =========================================================================
+global:
+  resolve_timeout: 2m
+
+# -------------------------------------------------------------------------
+# 🌲 CÂY ĐỊNH TUYẾN CẢNH BÁO (ROUTING TREE)
+# -------------------------------------------------------------------------
+route:
+  # Gom nhóm các alert có cùng tên và cùng service
+  group_by: ['alertname', 'service', 'severity']
+  
+  # Chờ 10s để gom thêm các alert xảy ra cùng lúc
+  group_wait: 10s
+  
+  # Sau khi gửi đợt 1, đợi 1m nếu có alert mới trong nhóm thì gửi update
+  group_interval: 1m
+  
+  # Nếu sự cố vẫn tiếp diễn, nhắc lại sau mỗi 2 tiếng (tránh spam)
+  repeat_interval: 2h
+  
+  # Receiver mặc định nếu không khớp nhánh nào
+  receiver: 'default-webhook-receiver'
+
+  # 🔀 Phân luồng theo mức độ nghiêm trọng
+  routes:
+    # Nhánh 1: Cực kỳ nghiêm trọng (P1 Critical)
+    - match:
+        severity: critical
+      receiver: 'p1-critical-receiver'
+      continue: false
+
+    # Nhánh 2: Cảnh báo suy giảm hiệu năng (P2 Warning)
+    - match:
+        severity: warning
+      receiver: 'p2-warning-receiver'
+      continue: false
+
+# -------------------------------------------------------------------------
+# 🔇 QUY TẮC ỨC CHẾ CẢNH BÁO (INHIBITION RULES)
+# -------------------------------------------------------------------------
+inhibit_rules:
+  # Nếu PaymentVaultDown đang nổ ➔ Tắt tiếng High5xxErrorRate
+  - source_match:
+      alertname: 'PaymentVaultDown'
+      severity: 'critical'
+    target_match:
+      alertname: 'High5xxErrorRate'
+    equal: ['service']
+
+# -------------------------------------------------------------------------
+# 📬 DANH SÁCH ĐÍCH NHẬN CẢNH BÁO (RECEIVERS)
+# -------------------------------------------------------------------------
+receivers:
+  # 1. Receiver mặc định (Fallback)
+  - name: 'default-webhook-receiver'
+    webhook_configs:
+      - url: 'http://alert-receiver:5001/webhook/general'
+        send_resolved: true
+
+  # 2. Receiver dành cho sự cố khẩn cấp (P1 Critical Hotline / PagerDuty)
+  - name: 'p1-critical-receiver'
+    webhook_configs:
+      - url: 'http://alert-receiver:5001/webhook/critical'
+        send_resolved: true
+
+  # 3. Receiver dành cho cảnh báo hiệu năng (P2 Warning Chat)
+  - name: 'p2-warning-receiver'
+    webhook_configs:
+      - url: 'http://alert-receiver:5001/webhook/warning'
+        send_resolved: true
