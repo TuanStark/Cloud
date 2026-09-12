@@ -1,0 +1,30 @@
+services:
+  # 1. Ứng dụng Payment Vault v1.3.0 mang mã nguồn lỗi
+  payment-vault-app:
+    build:
+      context: ./01-incident-simulation
+    container_name: payment-vault-prod-lab15
+    ports:
+      - "8082:8080"
+    networks:
+      - war-room-network
+
+  # 2. Prometheus Cockpit (Giám sát nhịp tim hệ thống)
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus-war-room
+    ports:
+      - "9092:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - war-room-network
+    depends_on:
+      - payment-vault-app
+
+networks:
+  war-room-network:
+    driver: bridge

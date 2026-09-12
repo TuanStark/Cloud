@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'payment-vault-service'
+    scrape_interval: 3s
+    static_configs:
+      - targets: ['payment-vault-app:8080']
+        labels:
+          environment: 'production'
+          app: 'payment-vault'
+          version: 'v1.3.0-buggy'
