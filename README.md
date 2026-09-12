@@ -36,7 +36,8 @@ Mục tiêu: Đưa bạn từ nền tảng Software/Fullstack Developer lên v�
 ```
 
 ### ⚔️ Giai Đoạn 2: Enterprise Battlegrounds (Thực Chiến Tác Chiến - ĐANG TRIỂN KHAI)
-> Xem chi tiết kế hoạch tổng thể tại: [BATTLEGROUND-MASTER-PLAN.md](file:///home/stark/Documents/Cloud/BATTLEGROUND-MASTER-PLAN.md)
+> 📘 **Tài liệu Kiến Trúc Cốt Lõi:** [ENTERPRISE-CLOUD-ARCHITECTURE-BLUEPRINT.md](file:///home/stark/Documents/Cloud/ENTERPRISE-CLOUD-ARCHITECTURE-BLUEPRINT.md) (5 Trụ cột AWS, 4 Mẫu hình Doanh nghiệp & Công thức Sizing).  
+> ⚔️ **Lộ Trình Tác Chiến:** [BATTLEGROUND-MASTER-PLAN.md](file:///home/stark/Documents/Cloud/BATTLEGROUND-MASTER-PLAN.md) (Kế hoạch 3 Đại Dự án).
 
 1. **Battleground 1: High-Throughput Fintech / E-Commerce Core**
    - *Xây:* Microservices + Apache Kafka + Redis Cluster + PostgreSQL Master-Replica HA.

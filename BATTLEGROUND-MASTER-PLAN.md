@@ -3,6 +3,8 @@
 
 > **Tuyên ngôn:** Kỹ sư SRE / Cloud DevSecOps thực thụ không được tạo ra từ những bài lab mẫu trong phòng thí nghiệm. Họ được tôi luyện qua những đợt nghẽn mạng lúc nửa đêm, những cuộc tấn công dồn dập vào cơ sở dữ liệu, và áp lực đưa hệ thống phục hồi với Zero Data Loss trong vòng vài phút.
 
+> 📘 **Tài liệu Tham Chiếu Kiến Trúc Toàn Diện:** Xem chi tiết 5 Khối Xương Sống Dịch Vụ AWS, 4 Mẫu Hình Doanh Nghiệp Chuẩn Mực & Công Thức Sizing tại [ENTERPRISE-CLOUD-ARCHITECTURE-BLUEPRINT.md](file:///home/stark/Documents/Cloud/ENTERPRISE-CLOUD-ARCHITECTURE-BLUEPRINT.md).
+
 ---
 
 ## 🧭 TỔNG QUAN HAI GIAI ĐOẠN ĐÀO TẠO
