@@ -100,9 +100,10 @@ resource "aws_eks_cluster" "main" {
   }
 
   lifecycle {
-    ignore_changes = [encryption_config]
+    ignore_changes = [encryption_config, enabled_cluster_log_types]
   }
 }
+
 
 
 # =============================================================

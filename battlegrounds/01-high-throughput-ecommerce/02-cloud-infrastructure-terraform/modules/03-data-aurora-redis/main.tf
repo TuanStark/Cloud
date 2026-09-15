@@ -34,7 +34,17 @@ resource "aws_rds_cluster" "aurora" {
   }
 
   lifecycle {
-    ignore_changes = [engine]
+    ignore_changes = [
+      engine,
+      engine_mode,
+      kms_key_id,
+      storage_encrypted,
+      vpc_security_group_ids,
+      tags,
+      tags_all,
+      backup_retention_period,
+      preferred_backup_window
+    ]
   }
 }
 
@@ -55,7 +65,7 @@ resource "aws_rds_cluster_instance" "instances" {
   }
 
   lifecycle {
-    ignore_changes = [engine]
+    ignore_changes = [engine, availability_zone, tags, auto_minor_version_upgrade]
   }
 }
 
