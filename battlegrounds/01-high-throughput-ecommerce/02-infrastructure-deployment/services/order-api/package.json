@@ -1,0 +1,16 @@
+{
+  "name": "ecommerce-order-api",
+  "version": "1.0.0",
+  "description": "High-Throughput Order Ingestion API Engine for Battleground 01",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "fastify": "^4.26.2",
+    "ioredis": "^5.4.1",
+    "kafkajs": "^2.2.4",
+    "pg": "^8.11.5"
+  }
+}

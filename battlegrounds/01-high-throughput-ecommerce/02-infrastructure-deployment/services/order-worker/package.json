@@ -1,0 +1,14 @@
+{
+  "name": "ecommerce-order-worker",
+  "version": "1.0.0",
+  "description": "High-Throughput Order Processing Worker Consumer for Battleground 01",
+  "main": "src/worker.js",
+  "scripts": {
+    "start": "node src/worker.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "kafkajs": "^2.2.4",
+    "pg": "^8.11.5"
+  }
+}
