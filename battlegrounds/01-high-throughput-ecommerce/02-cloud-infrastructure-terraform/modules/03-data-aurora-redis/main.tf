@@ -14,7 +14,7 @@ resource "random_password" "redis_auth_token" {
 # 1. Cụm Cluster (Bộ lưu trữ phân tán 6 bản sao trên 3 AZs)
 resource "aws_rds_cluster" "aurora" {
   cluster_identifier     = "${var.project_name}-${var.environment}-aurora-cluster"
-  engine                 = "aurora-postgresql"
+  engine                 = "postgres"
   engine_version         = "16.1"
   database_name          = var.database_name
   master_username        = var.master_username
@@ -32,6 +32,10 @@ resource "aws_rds_cluster" "aurora" {
   tags = {
     Name = "${var.project_name}-${var.environment}-aurora-cluster"
   }
+
+  lifecycle {
+    ignore_changes = [engine]
+  }
 }
 
 # 2. Các Instance Máy Chủ (1 Writer + 2 Readers trải trên 3 AZs)
@@ -40,20 +44,24 @@ resource "aws_rds_cluster_instance" "instances" {
   identifier          = "${var.project_name}-${var.environment}-aurora-instance-${count.index + 1}"
   cluster_identifier  = aws_rds_cluster.aurora.id
   instance_class      = var.aurora_instance_class
-  engine              = aws_rds_cluster.aurora.engine
+  engine              = "postgres"
   engine_version      = aws_rds_cluster.aurora.engine_version
   publicly_accessible = false
   availability_zone   = var.availability_zones[count.index]
-  # Performance Insights (Giám sát tải câu lệnh SQL chi tiết)
-  performance_insights_enabled = true
+  performance_insights_enabled = false
   tags = {
     Name = "${var.project_name}-${var.environment}-aurora-instance-${count.index + 1}"
     Role = count.index == 0 ? "writer" : "reader"
+  }
+
+  lifecycle {
+    ignore_changes = [engine]
   }
 }
 
 # KHỐI 3: ELASTICACHE REDIS REPLICATION GROUP (MULTI-AZ AUTO FAILOVER)
 resource "aws_elasticache_replication_group" "redis" {
+  count                = var.enable_elasticache ? 1 : 0
   replication_group_id = "${var.project_name}-${var.environment}-redis"
   description          = "Multi-AZ Redis Cluster for Flash Sale Session and Hot Inventory"
 
@@ -80,3 +88,4 @@ resource "aws_elasticache_replication_group" "redis" {
     Name = "${var.project_name}-${var.environment}-redis-cluster"
   }
 }
+

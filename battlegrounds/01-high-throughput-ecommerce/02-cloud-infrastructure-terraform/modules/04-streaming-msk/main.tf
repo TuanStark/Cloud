@@ -1,5 +1,6 @@
 # KHỐI 1: CLOUDWATCH LOG GROUP (GIÁM SÁT BROKER)
 resource "aws_cloudwatch_log_group" "msk" {
+  count             = var.enable_msk ? 1 : 0
   name              = "/aws/msk/${var.project_name}-${var.environment}-kafka"
   retention_in_days = 7 # FinOps: Giữ log 7 ngày để tối ưu chi phí CloudWatch
 
@@ -10,6 +11,7 @@ resource "aws_cloudwatch_log_group" "msk" {
 
 # KHỐI 2: MSK SERVER PROPERTIES CONFIGURATION (TINH CHỈNH NHÂN KAFKA)
 resource "aws_msk_configuration" "kafka" {
+  count             = var.enable_msk ? 1 : 0
   name              = "${var.project_name}-${var.environment}-msk-config"
   kafka_versions    = [var.kafka_version]
   server_properties = <<EOF
@@ -22,6 +24,7 @@ EOF
 
 # KHỐI 3: AMAZON MSK CLUSTER (3 BROKERS TRÊN 3 AZs)
 resource "aws_msk_cluster" "kafka" {
+  count                  = var.enable_msk ? 1 : 0
   cluster_name           = "${var.project_name}-${var.environment}-msk"
   kafka_version          = var.kafka_version
   number_of_broker_nodes = 3 # 1 Broker cho MỖI AZ (Tổng cộng 3 AZs)
@@ -51,8 +54,8 @@ resource "aws_msk_cluster" "kafka" {
 
   # GẮN CẤU HÌNH TÙY BIẾN
   configuration_info {
-    arn      = aws_msk_configuration.kafka.arn
-    revision = aws_msk_configuration.kafka.latest_revision
+    arn      = aws_msk_configuration.kafka[0].arn
+    revision = aws_msk_configuration.kafka[0].latest_revision
   }
 
   # GẮN LOGGING
@@ -60,7 +63,7 @@ resource "aws_msk_cluster" "kafka" {
     broker_logs {
       cloudwatch_logs {
         enabled   = true
-        log_group = aws_cloudwatch_log_group.msk.name
+        log_group = aws_cloudwatch_log_group.msk[0].name
       }
     }
   }
@@ -69,3 +72,4 @@ resource "aws_msk_cluster" "kafka" {
     Name = "${var.project_name}-${var.environment}-msk-cluster"
   }
 }
+

@@ -155,6 +155,7 @@ resource "aws_db_subnet_group" "aurora" {
 }
 
 resource "aws_elasticache_subnet_group" "redis" {
+  count       = var.enable_elasticache ? 1 : 0
   name        = "${var.project_name}-${var.environment}-redis-subnet-group"
   description = "Subnet group dành riêng cho cụm Amazon ElastiCache Redis Multi-AZ"
   subnet_ids  = aws_subnet.isolated_db[*].id

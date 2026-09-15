@@ -65,3 +65,9 @@ variable "redis_replica_count" {
   type    = number
   default = 2
 }
+
+variable "enable_elasticache" {
+  type        = bool
+  default     = false
+  description = "Bật/tắt cụm ElastiCache Redis (tắt khi dùng Floci Emulator do chưa hỗ trợ CreateCacheSubnetGroup)"
+}

@@ -98,7 +98,12 @@ resource "aws_eks_cluster" "main" {
     "karpenter.sh/discovery"                                           = "${var.project_name}-${var.environment}-eks"
     "kubernetes.io/cluster/${var.project_name}-${var.environment}-eks" = "owned"
   }
+
+  lifecycle {
+    ignore_changes = [encryption_config]
+  }
 }
+
 
 # =============================================================
 # KHỐI 3: OIDC IDENTITY PROVIDER (NỀN TẢNG CỦA ZERO-TRUST IRSA)

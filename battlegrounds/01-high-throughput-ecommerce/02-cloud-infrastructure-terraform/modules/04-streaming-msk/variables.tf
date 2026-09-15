@@ -34,3 +34,10 @@ variable "ebs_volume_size" {
   type    = number
   default = 50
 }
+
+variable "enable_msk" {
+  type        = bool
+  default     = false
+  description = "Bật/tắt cụm Amazon MSK Kafka (tắt khi dùng Floci Emulator do lỗi 404 DescribeConfigurationRevision)"
+}
+

@@ -40,5 +40,5 @@ output "aurora_subnet_group_name" {
 
 output "redis_subnet_group_name" {
   description = "Tên ElastiCache Subnet Group đã tạo sẵn cho Redis"
-  value       = aws_elasticache_subnet_group.redis.name
+  value       = try(aws_elasticache_subnet_group.redis[0].name, "")
 }

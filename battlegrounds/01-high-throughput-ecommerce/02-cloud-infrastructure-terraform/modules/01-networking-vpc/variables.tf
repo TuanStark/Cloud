@@ -77,3 +77,9 @@ variable "eks_cluster_name" {
   description = "Tên cụm EKS dùng để gắn tag tự động nhận diện Subnet cho AWS Load Balancer Controller và Karpenter"
   default     = "ecommerce-prod-eks"
 }
+
+variable "enable_elasticache" {
+  type        = bool
+  default     = false
+  description = "Bật/tắt ElastiCache Subnet Group (tắt khi dùng Floci do chưa hỗ trợ CreateCacheSubnetGroup)"
+}

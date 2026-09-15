@@ -37,17 +37,17 @@ output "aurora_port" {
 # ==============================================================================
 output "redis_primary_endpoint" {
   description = "Primary Endpoint của Redis (Dành cho ghi cache & trừ kho ảo)"
-  value       = aws_elasticache_replication_group.redis.primary_endpoint_address
+  value       = try(aws_elasticache_replication_group.redis[0].primary_endpoint_address, "127.0.0.1")
 }
 
 output "redis_reader_endpoint" {
   description = "Reader Endpoint của Redis (Dành cho đọc cache sản phẩm)"
-  value       = aws_elasticache_replication_group.redis.reader_endpoint_address
+  value       = try(aws_elasticache_replication_group.redis[0].reader_endpoint_address, "127.0.0.1")
 }
 
 output "redis_port" {
   description = "Cổng kết nối Redis"
-  value       = aws_elasticache_replication_group.redis.port
+  value       = try(aws_elasticache_replication_group.redis[0].port, 6379)
 }
 
 output "redis_auth_token" {
@@ -55,3 +55,4 @@ output "redis_auth_token" {
   value       = random_password.redis_auth_token.result
   sensitive   = true # BẮT BUỘC: Che giấu token bảo mật
 }
+
