@@ -1,0 +1,42 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: order-worker-keda-autoscaler
+  namespace: ecommerce
+  labels:
+    app.kubernetes.io/name: order-worker
+    app.kubernetes.io/part-of: ecommerce-platform
+    defense-layer: keda-event-driven-autoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: order-worker-deployment
+  minReplicaCount: 2
+  maxReplicaCount: 10
+  pollingInterval: 5      # Kiểm tra Kafka Lag mỗi 5 giây
+  cooldownPeriod: 30       # Chờ 30 giây sau khi Lag = 0 trước khi scale down
+  advanced:
+    restoreToOriginalReplicaCount: true
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 10
+        scaleDown:
+          stabilizationWindowSeconds: 30
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 15
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: kafka-service.ecommerce.svc.cluster.local:9092
+        consumerGroup: order-processing-group
+        topic: orders.events
+        lagThreshold: "50" # Mỗi 50 messages lag sẽ kích hoạt tăng thêm 1 Worker pod
+        offsetResetPolicy: latest

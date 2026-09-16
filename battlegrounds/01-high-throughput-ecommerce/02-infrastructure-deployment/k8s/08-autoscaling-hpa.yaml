@@ -12,7 +12,7 @@ spec:
     kind: Deployment
     name: order-api-deployment
   minReplicas: 3
-  maxReplicas: 20
+  maxReplicas: 5
   metrics:
     - type: Resource
       resource:
@@ -34,12 +34,12 @@ spec:
           value: 100
           periodSeconds: 15
         - type: Pods
-          value: 4
+          value: 2
           periodSeconds: 15
       selectPolicy: Max
     scaleDown:
-      stabilizationWindowSeconds: 300
+      stabilizationWindowSeconds: 15
       policies:
         - type: Percent
-          value: 10
-          periodSeconds: 60
+          value: 100
+          periodSeconds: 15
