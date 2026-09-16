@@ -18,7 +18,7 @@ metadata:
     alb.ingress.kubernetes.io/healthy-threshold-count: "2"
     alb.ingress.kubernetes.io/unhealthy-threshold-count: "3"
     # Gắn Khiên bảo vệ AWS WAF v2 Web ACL do Terraform khởi tạo
-    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-east-1:000000000000:regional/webacl/ecommerce-prod-waf/f28ea18c-85c3-4927-b99b-ae2bb86dc4f4
+    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-east-1:000000000000:regional/webacl/ecommerce-prod-waf/619e3858-c45d-4d8d-9cce-58ca3f5bf7f6
     alb.ingress.kubernetes.io/group.name: ecommerce-prod-alb
 spec:
   rules:

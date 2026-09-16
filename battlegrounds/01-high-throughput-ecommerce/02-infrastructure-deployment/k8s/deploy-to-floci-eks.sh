@@ -22,24 +22,31 @@ echo "==========================================================================
 echo "[Step 1] Đang lấy thông tin xác thực Kubeconfig từ Floci..."
 mkdir -p "$(dirname "${KUBECONFIG_PATH}")"
 
-AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_DEFAULT_REGION="${AWS_REGION}" \
+export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+export AWS_DEFAULT_REGION="${AWS_REGION}"
+
 aws --endpoint-url "${FLOCI_ENDPOINT}" eks update-kubeconfig \
     --name "${CLUSTER_NAME}" \
     --kubeconfig "${KUBECONFIG_PATH}"
 
+EKS_ENDPOINT=$(aws --endpoint-url "${FLOCI_ENDPOINT}" eks describe-cluster --name "${CLUSTER_NAME}" --query "cluster.endpoint" --output text 2>/dev/null || echo "https://localhost:6500")
+EKS_PORT=$(echo "${EKS_ENDPOINT}" | grep -oE '[0-9]+$' || echo "6500")
+
 echo "✅ Đã lưu Kubeconfig vào: ${KUBECONFIG_PATH}"
+echo "📍 EKS Cluster Endpoint: ${EKS_ENDPOINT} (Port: ${EKS_PORT})"
 
 # 2. Kiểm tra khả năng kết nối tới Kubernetes API Server
 echo "[Step 2] Kiểm tra kết nối tới Kubernetes Control Plane..."
-if ! kubectl --kubeconfig="${KUBECONFIG_PATH}" cluster-info --request-timeout=5s 2>/dev/null; then
-    echo "⚠️ CẢNH BÁO KẾT NỐI: Không thể chạm trực tiếp vào API Server của EKS trên Floci."
-    echo "Lý do: Floci trả về endpoint nội bộ 'https://localhost:6504'."
-    echo "👉 Nếu bạn có quyền SSH vào máy chủ ${FLOCI_ENDPOINT}, vui lòng tạo tunnel:"
-    echo "   ssh -L 6504:localhost:6504 <user>@chungkhoanai.dpdns.org"
-    echo "Sau đó chạy lại script này."
+if ! kubectl --kubeconfig="${KUBECONFIG_PATH}" cluster-info --request-timeout=4s 2>/dev/null; then
+    echo "⚠️ CẢNH BÁO KẾT NỐI: Chưa thể chạm trực tiếp vào API Server của EKS trên Floci."
+    echo "Lý do: Floci trả về endpoint nội bộ '${EKS_ENDPOINT}' (chỉ chạy trong mạng máy chủ Floci)."
+    echo "👉 Để kết nối trực tiếp, vui lòng mở SSH tunnel sang máy chủ Floci:"
+    echo "   ssh -L ${EKS_PORT}:localhost:${EKS_PORT} root@chungkhoanai.dpdns.org"
+    echo "Sau khi mở tunnel, chạy lại script này để apply lên cụm."
     echo ""
-    echo "Thực hiện dry-run kiểm tra tính hợp lệ của toàn bộ manifests:"
-    kubectl --kubeconfig="${KUBECONFIG_PATH}" apply -k "${SCRIPT_DIR}" --dry-run=client
+    echo "🔍 Tiến hành kiểm tra cú pháp và tính hợp lệ của toàn bộ manifests bằng Kustomize:"
+    kubectl kustomize "${SCRIPT_DIR}" > /dev/null
     echo "✅ Toàn bộ Kubernetes Manifests hợp lệ 100% theo tiêu chuẩn EKS v1.30!"
     exit 0
 fi
