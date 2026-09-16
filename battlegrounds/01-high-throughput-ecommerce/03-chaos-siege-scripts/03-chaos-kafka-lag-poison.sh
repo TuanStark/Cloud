@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 # ============================================================================
 # KỊCH BẢN 3: TẮC NGHẼN HÀNG ĐỢI & DỮ LIỆU ĐỘC HẠI (KAFKA LAG & POISON PILL)
-# Battleground 01: High-Throughput E-Commerce Core (EKS & Floci Cloud Native)
+# Battleground 01: High-Throughput E-Commerce Core
+# Thực thi trực tiếp TRÊN HẠ TẦNG FLOCI EKS
 # ============================================================================
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGET_URL="${TARGET_URL:-http://localhost:8080}"
 KUBECONFIG_PATH="${KUBECONFIG_PATH:-${HOME}/.kube/floci-config}"
 TOPIC="orders.events"
 GROUP_ID="order-processing-group"
 
 echo "============================================================================"
 echo "💀 [RED TEAM SIEGE] KHỞI ĐỘNG KỊCH BẢN 3: KAFKA LAG & POISON PILL INJECTION"
-echo "Môi trường: EKS on Floci Cloud"
+echo "Môi trường: Floci EKS Cluster"
 echo "Topic:      ${TOPIC}"
 echo "============================================================================"
 
@@ -22,17 +22,26 @@ echo "[Step 1] Tạm dừng Worker xử lý đơn hàng (scale replicas = 0)..."
 kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce scale deployment/order-worker-deployment --replicas=0
 kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce wait --for=delete pod -l app=order-worker --timeout=20s 2>/dev/null || true
 
-# 2. Bơm 200 đơn hàng hợp lệ để tạo Lag tích lũy
-echo "[Step 2] Bơm 200 đơn hàng qua Order API vào Kafka để dồn ứ hàng đợi..."
-for i in {1..200}; do
-    curl -s -X POST "${TARGET_URL}/api/v1/orders" \
-        -H "Content-Type: application/json" \
-        -d "{\"product_id\":\"prod_macbook_m3\",\"quantity\":1,\"user_id\":\"user_lag_${i}\"}" > /dev/null &
-    if (( i % 50 == 0 )); then
-        wait
-    fi
-done
-wait
+# 2. Bơm 200 đơn hàng hợp lệ trực tiếp TRÊN CỤM FLOCI EKS để tạo Lag
+echo "[Step 2] Bơm 200 đơn hàng qua Order API vào Kafka để dồn ứ hàng đợi (In-Cluster)..."
+kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce exec deployment/order-api-deployment -- node -e '
+async function pump() {
+  const promises = [];
+  for (let i = 1; i <= 200; i++) {
+    promises.push(
+      fetch("http://localhost:8080/api/v1/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ product_id: "prod_macbook_m3", quantity: 1, user_id: `lag_user_${i}` })
+      })
+    );
+  }
+  await Promise.all(promises);
+  console.log("PUMPED_200_OK");
+}
+pump();
+'
+
 echo "✅ Đã bơm 200 orders vào Kafka."
 
 # 3. TIÊM POISON PILL (DỮ LIỆU ĐỘC HẠI / MALFORMED JSON)

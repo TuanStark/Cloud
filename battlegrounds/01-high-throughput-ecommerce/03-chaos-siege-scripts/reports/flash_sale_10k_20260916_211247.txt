@@ -1,0 +1,527 @@
+Warning: would violate PodSecurity "restricted:latest": allowPrivilegeEscalation != false (container "k6-flash-sale-siege" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "k6-flash-sale-siege" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "k6-flash-sale-siege" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "k6-flash-sale-siege" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+If you don't see a command prompt, try pressing enter.
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+
+     execution: local
+        script: -
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 3000 max VUs, 3m10s max duration (incl. graceful stop):
+              * flash_sale_siege: Up to 10000.00 iterations/s for 2m40s over 5 stages (maxVUs: 500-3000, gracefulStop: 30s)
+
+
+running (0m00.7s), 0025/0500 VUs, 19 complete and 0 interrupted iterations
+flash_sale_siege   [   0% ] 0025/0500 VUs  0m00.7s/2m40s  00122.09 iters/s
+
+running (0m01.7s), 0083/0500 VUs, 49 complete and 0 interrupted iterations
+flash_sale_siege   [   1% ] 0083/0500 VUs  0m01.7s/2m40s  00153.44 iters/s
+
+running (0m02.7s), 0134/0500 VUs, 85 complete and 0 interrupted iterations
+flash_sale_siege   [   2% ] 0163/0500 VUs  0m03.2s/2m40s  00191.06 iters/s
+
+running (0m03.7s), 0138/0500 VUs, 164 complete and 0 interrupted iterations
+flash_sale_siege   [   2% ] 0138/0500 VUs  0m03.7s/2m40s  00196.63 iters/s
+
+running (0m04.8s), 0279/0500 VUs, 228 complete and 0 interrupted iterations
+flash_sale_siege   [   3% ] 0279/0500 VUs  0m04.8s/2m40s  00238.80 iters/s
+
+running (0m05.8s), 0245/0500 VUs, 359 complete and 0 interrupted iterations
+flash_sale_siege   [   4% ] 0245/0500 VUs  0m05.8s/2m40s  00256.25 iters/s
+
+running (0m06.8s), 0273/0500 VUs, 379 complete and 0 interrupted iterations
+flash_sale_siege   [   4% ] 0273/0500 VUs  0m06.8s/2m40s  00264.55 iters/s
+
+running (0m07.7s), 0321/0500 VUs, 471 complete and 0 interrupted iterations
+flash_sale_siege   [   5% ] 0321/0500 VUs  0m07.7s/2m40s  00288.00 iters/s
+
+running (0m08.8s), 0377/0500 VUs, 509 complete and 0 interrupted iterations
+flash_sale_siege   [   6% ] 0262/0500 VUs  0m10.1s/2m40s  00319.98 iters/s
+
+running (0m10.1s), 0262/0500 VUs, 751 complete and 0 interrupted iterations
+flash_sale_siege   [   6% ] 0262/0500 VUs  0m10.1s/2m40s  00319.98 iters/s
+
+running (0m10.7s), 0539/0540 VUs, 961 complete and 0 interrupted iterations
+flash_sale_siege   [   7% ] 0539/0540 VUs  0m10.7s/2m40s  00465.69 iters/s
+
+running (0m11.7s), 0543/0544 VUs, 1106 complete and 0 interrupted iterations
+flash_sale_siege   [   7% ] 0543/0544 VUs  0m11.7s/2m40s  00613.76 iters/s
+
+running (0m12.7s), 0544/0544 VUs, 1108 complete and 0 interrupted iterations
+flash_sale_siege   [   8% ] 0544/0544 VUs  0m12.7s/2m40s  00665.61 iters/s
+
+running (0m13.7s), 0495/0544 VUs, 1175 complete and 0 interrupted iterations
+flash_sale_siege   [  10% ] 0542/0545 VUs  0m15.6s/2m40s  00730.46 iters/s
+
+running (0m15.6s), 0542/0545 VUs, 1216 complete and 0 interrupted iterations
+flash_sale_siege   [  10% ] 0542/0545 VUs  0m15.6s/2m40s  00730.46 iters/s
+
+running (0m15.7s), 0540/0545 VUs, 1218 complete and 0 interrupted iterations
+flash_sale_siege   [  10% ] 0540/0545 VUs  0m15.7s/2m40s  00730.46 iters/s
+
+running (0m16.7s), 0193/0547 VUs, 1679 complete and 0 interrupted iterations
+flash_sale_siege   [  10% ] 0193/0547 VUs  0m16.7s/2m40s  00738.49 iters/s
+
+running (0m18.0s), 0168/0547 VUs, 1850 complete and 0 interrupted iterations
+flash_sale_siege   [  11% ] 0168/0547 VUs  0m18.0s/2m40s  00747.21 iters/s
+
+running (0m18.7s), 0167/0547 VUs, 1928 complete and 0 interrupted iterations
+flash_sale_siege   [  12% ] 0167/0547 VUs  0m18.7s/2m40s  00751.54 iters/s
+
+running (0m19.7s), 0093/0547 VUs, 2115 complete and 0 interrupted iterations
+flash_sale_siege   [  12% ] 0093/0547 VUs  0m19.7s/2m40s  00758.69 iters/s
+
+running (0m20.7s), 0042/0547 VUs, 2276 complete and 0 interrupted iterations
+flash_sale_siege   [  13% ] 0042/0547 VUs  0m20.8s/2m40s  00765.07 iters/s
+
+running (0m21.7s), 0027/0547 VUs, 2413 complete and 0 interrupted iterations
+flash_sale_siege   [  14% ] 0027/0547 VUs  0m21.7s/2m40s  00772.09 iters/s
+
+running (0m22.7s), 0161/0547 VUs, 2447 complete and 0 interrupted iterations
+flash_sale_siege   [  14% ] 0161/0547 VUs  0m22.7s/2m40s  00781.82 iters/s
+
+running (0m23.7s), 0191/0547 VUs, 2516 complete and 0 interrupted iterations
+flash_sale_siege   [  15% ] 0191/0547 VUs  0m23.7s/2m40s  00787.33 iters/s
+
+running (0m24.7s), 0477/0548 VUs, 2652 complete and 0 interrupted iterations
+flash_sale_siege   [  15% ] 0477/0547 VUs  0m24.7s/2m40s  00849.30 iters/s
+
+running (0m26.0s), 0503/0548 VUs, 2714 complete and 0 interrupted iterations
+flash_sale_siege   [  16% ] 0503/0547 VUs  0m26.0s/2m40s  00901.18 iters/s
+
+running (0m27.9s), 0548/0549 VUs, 2837 complete and 0 interrupted iterations
+flash_sale_siege   [  17% ] 0548/0548 VUs  0m27.9s/2m40s  01830.15 iters/s
+
+running (0m27.9s), 0548/0549 VUs, 2837 complete and 0 interrupted iterations
+flash_sale_siege   [  17% ] 0548/0548 VUs  0m27.9s/2m40s  01830.15 iters/s
+
+running (0m28.7s), 0003/0550 VUs, 3390 complete and 0 interrupted iterations
+flash_sale_siege   [  18% ] 0003/0550 VUs  0m28.7s/2m40s  01831.90 iters/s
+
+running (0m29.7s), 0058/0550 VUs, 3523 complete and 0 interrupted iterations
+flash_sale_siege   [  19% ] 0058/0550 VUs  0m30.0s/2m40s  01845.83 iters/s
+
+running (0m30.8s), 0223/0550 VUs, 3585 complete and 0 interrupted iterations
+flash_sale_siege   [  19% ] 0223/0550 VUs  0m30.8s/2m40s  01862.22 iters/s
+
+running (0m31.7s), 0065/0550 VUs, 3822 complete and 0 interrupted iterations
+flash_sale_siege   [  20% ] 0065/0550 VUs  0m31.7s/2m40s  01867.37 iters/s
+
+running (0m32.7s), 0039/0550 VUs, 3936 complete and 0 interrupted iterations
+flash_sale_siege   [  20% ] 0039/0550 VUs  0m32.7s/2m40s  01874.21 iters/s
+
+running (0m33.7s), 0380/0550 VUs, 3992 complete and 0 interrupted iterations
+flash_sale_siege   [  21% ] 0380/0550 VUs  0m33.7s/2m40s  01902.17 iters/s
+
+running (0m34.7s), 0284/0550 VUs, 4135 complete and 0 interrupted iterations
+flash_sale_siege   [  22% ] 0284/0550 VUs  0m34.7s/2m40s  01905.54 iters/s
+
+running (0m35.7s), 0015/0550 VUs, 4483 complete and 0 interrupted iterations
+flash_sale_siege   [  22% ] 0015/0550 VUs  0m35.7s/2m40s  01910.57 iters/s
+
+running (0m36.7s), 0046/0550 VUs, 4557 complete and 0 interrupted iterations
+flash_sale_siege   [  23% ] 0046/0550 VUs  0m36.7s/2m40s  01917.26 iters/s
+
+running (0m37.7s), 0069/0550 VUs, 4691 complete and 0 interrupted iterations
+flash_sale_siege   [  24% ] 0069/0550 VUs  0m37.7s/2m40s  01928.90 iters/s
+
+running (0m38.8s), 0340/0550 VUs, 4752 complete and 0 interrupted iterations
+flash_sale_siege   [  24% ] 0340/0550 VUs  0m38.8s/2m40s  01951.99 iters/s
+
+running (0m43.3s), 0348/0550 VUs, 4829 complete and 0 interrupted iterations
+flash_sale_siege   [  27% ] 0348/0550 VUs  0m43.3s/2m40s  01957.72 iters/s
+
+running (0m43.7s), 0340/0550 VUs, 4844 complete and 0 interrupted iterations
+flash_sale_siege   [  27% ] 0340/0550 VUs  0m43.7s/2m40s  01957.72 iters/s
+
+running (0m46.5s), 0550/0550 VUs, 4865 complete and 0 interrupted iterations
+flash_sale_siege   [  29% ] 0550/0550 VUs  0m46.5s/2m40s  01973.25 iters/s
+
+running (0m46.7s), 0550/0551 VUs, 4865 complete and 0 interrupted iterations
+flash_sale_siege   [  29% ] 0550/0551 VUs  0m46.7s/2m40s  01973.32 iters/s
+
+running (0m47.7s), 0433/0552 VUs, 5056 complete and 0 interrupted iterations
+flash_sale_siege   [  30% ] 0433/0552 VUs  0m47.7s/2m40s  01978.31 iters/s
+
+running (0m52.9s), 0376/0584 VUs, 5539 complete and 0 interrupted iterations
+flash_sale_siege   [  33% ] 0376/0584 VUs  0m52.9s/2m40s  02122.23 iters/s
+
+running (0m52.9s), 0378/0584 VUs, 5539 complete and 0 interrupted iterations
+flash_sale_siege   [  33% ] 0378/0584 VUs  0m52.9s/2m40s  02122.23 iters/s
+
+running (0m53.8s), 0324/0584 VUs, 5733 complete and 0 interrupted iterations
+flash_sale_siege   [  35% ] 0324/0584 VUs  0m55.5s/2m40s  02130.51 iters/s
+
+running (0m55.7s), 0324/0584 VUs, 5733 complete and 0 interrupted iterations
+flash_sale_siege   [  35% ] 0324/0584 VUs  0m55.7s/2m40s  02130.51 iters/s
+
+running (0m55.7s), 0324/0584 VUs, 5733 complete and 0 interrupted iterations
+flash_sale_siege   [  35% ] 0324/0584 VUs  0m55.7s/2m40s  02130.51 iters/s
+
+running (0m56.8s), 0354/0584 VUs, 5733 complete and 0 interrupted iterations
+flash_sale_siege   [  35% ] 0354/0584 VUs  0m56.8s/2m40s  02132.76 iters/s
+
+running (0m58.2s), 0273/0584 VUs, 5827 complete and 0 interrupted iterations
+flash_sale_siege   [  36% ] 0273/0584 VUs  0m58.2s/2m40s  02133.51 iters/s
+
+running (0m58.7s), 0584/0585 VUs, 5827 complete and 0 interrupted iterations
+flash_sale_siege   [  37% ] 0584/0584 VUs  0m58.7s/2m40s  02158.92 iters/s
+
+running (0m59.7s), 0422/0585 VUs, 5990 complete and 0 interrupted iterations
+flash_sale_siege   [  37% ] 0422/0584 VUs  0m59.7s/2m40s  02159.60 iters/s
+
+running (1m00.7s), 0424/0585 VUs, 6052 complete and 0 interrupted iterations
+flash_sale_siege   [  38% ] 0424/0584 VUs  1m00.7s/2m40s  02164.04 iters/s
+
+running (1m01.8s), 0471/0585 VUs, 6071 complete and 0 interrupted iterations
+flash_sale_siege   [  39% ] 0471/0584 VUs  1m01.8s/2m40s  02167.73 iters/s
+time="2026-09-16T14:14:04Z" level=warning msg="Request Failed" error="Post \"http://order-api-service:80/api/v1/orders\": request timeout"
+time="2026-09-16T14:14:05Z" level=warning msg="Request Failed" error="Post \"http://order-api-service:80/api/v1/orders\": request timeout"
+time="2026-09-16T14:14:05Z" level=warning msg="Request Failed" error="Post \"http://order-api-service:80/api/v1/orders\": request timeout"
+
+running (1m02.7s), 0490/0585 VUs, 6093 complete and 0 interrupted iterations
+flash_sale_siege   [  39% ] 0490/0584 VUs  1m02.7s/2m40s  02170.69 iters/s
+
+running (1m04.7s), 0585/0585 VUs, 6187 complete and 0 interrupted iterations
+flash_sale_siege   [  40% ] 0585/0585 VUs  1m04.7s/2m40s  02223.84 iters/s
+
+running (1m05.8s), 0539/0586 VUs, 6233 complete and 0 interrupted iterations
+flash_sale_siege   [  41% ] 0539/0586 VUs  1m05.8s/2m40s  02223.84 iters/s
+
+running (1m06.7s), 0284/0587 VUs, 6770 complete and 0 interrupted iterations
+flash_sale_siege   [  42% ] 0284/0587 VUs  1m06.7s/2m40s  02241.70 iters/s
+
+running (1m08.4s), 0310/0587 VUs, 6822 complete and 0 interrupted iterations
+flash_sale_siege   [  43% ] 0310/0587 VUs  1m08.4s/2m40s  02245.97 iters/s
+
+running (1m08.7s), 0140/0587 VUs, 6997 complete and 0 interrupted iterations
+flash_sale_siege   [  43% ] 0140/0587 VUs  1m08.7s/2m40s  02246.69 iters/s
+
+running (1m09.7s), 0094/0587 VUs, 7229 complete and 0 interrupted iterations
+flash_sale_siege   [  44% ] 0094/0587 VUs  1m09.7s/2m40s  02257.87 iters/s
+
+running (1m10.7s), 0539/0587 VUs, 7262 complete and 0 interrupted iterations
+flash_sale_siege   [  44% ] 0539/0587 VUs  1m10.7s/2m40s  02285.34 iters/s
+
+running (1m11.7s), 0578/0589 VUs, 7274 complete and 0 interrupted iterations
+flash_sale_siege   [  45% ] 0578/0588 VUs  1m11.7s/2m40s  02342.51 iters/s
+
+running (1m12.7s), 0513/0589 VUs, 7397 complete and 0 interrupted iterations
+flash_sale_siege   [  45% ] 0513/0588 VUs  1m12.7s/2m40s  02346.54 iters/s
+
+running (1m14.0s), 0566/0589 VUs, 7598 complete and 0 interrupted iterations
+flash_sale_siege   [  46% ] 0566/0589 VUs  1m14.0s/2m40s  02360.82 iters/s
+
+running (1m14.7s), 0584/0590 VUs, 7612 complete and 0 interrupted iterations
+flash_sale_siege   [  47% ] 0584/0589 VUs  1m14.7s/2m40s  03406.17 iters/s
+
+running (1m15.7s), 0527/0590 VUs, 7714 complete and 0 interrupted iterations
+flash_sale_siege   [  47% ] 0527/0589 VUs  1m15.7s/2m40s  03408.53 iters/s
+
+running (1m16.7s), 0550/0590 VUs, 7801 complete and 0 interrupted iterations
+flash_sale_siege   [  48% ] 0550/0589 VUs  1m16.7s/2m40s  03449.04 iters/s
+
+running (1m17.7s), 0473/0590 VUs, 7935 complete and 0 interrupted iterations
+flash_sale_siege   [  49% ] 0473/0589 VUs  1m17.7s/2m40s  03479.87 iters/s
+
+running (1m18.8s), 0238/0590 VUs, 8230 complete and 0 interrupted iterations
+flash_sale_siege   [  49% ] 0238/0590 VUs  1m18.8s/2m40s  03482.16 iters/s
+
+running (1m19.7s), 0091/0590 VUs, 8436 complete and 0 interrupted iterations
+flash_sale_siege   [  50% ] 0091/0590 VUs  1m19.7s/2m40s  03484.45 iters/s
+
+running (1m20.7s), 0024/0590 VUs, 8649 complete and 0 interrupted iterations
+flash_sale_siege   [  50% ] 0024/0590 VUs  1m20.7s/2m40s  03489.98 iters/s
+
+running (1m21.7s), 0353/0590 VUs, 8700 complete and 0 interrupted iterations
+flash_sale_siege   [  51% ] 0353/0590 VUs  1m21.7s/2m40s  03504.60 iters/s
+
+running (1m22.7s), 0377/0590 VUs, 8743 complete and 0 interrupted iterations
+flash_sale_siege   [  52% ] 0377/0590 VUs  1m22.7s/2m40s  03506.89 iters/s
+
+running (1m23.8s), 0486/0590 VUs, 8962 complete and 0 interrupted iterations
+flash_sale_siege   [  53% ] 0486/0590 VUs  1m24.8s/2m40s  03519.49 iters/s
+
+running (1m24.8s), 0486/0590 VUs, 8962 complete and 0 interrupted iterations
+flash_sale_siege   [  53% ] 0486/0590 VUs  1m24.8s/2m40s  03519.49 iters/s
+
+running (1m26.1s), 0297/0591 VUs, 9257 complete and 0 interrupted iterations
+flash_sale_siege   [  54% ] 0297/0591 VUs  1m26.1s/2m40s  03879.50 iters/s
+
+running (1m26.7s), 0123/0592 VUs, 9500 complete and 0 interrupted iterations
+flash_sale_siege   [  54% ] 0123/0592 VUs  1m26.7s/2m40s  03882.35 iters/s
+
+running (1m27.7s), 0066/0592 VUs, 9704 complete and 0 interrupted iterations
+flash_sale_siege   [  55% ] 0066/0592 VUs  1m27.7s/2m40s  03887.30 iters/s
+
+running (1m28.7s), 0012/0592 VUs, 9880 complete and 0 interrupted iterations
+flash_sale_siege   [  55% ] 0012/0592 VUs  1m28.7s/2m40s  03891.41 iters/s
+
+running (1m29.7s), 0592/0593 VUs, 10001 complete and 0 interrupted iterations
+flash_sale_siege   [  56% ] 0592/0592 VUs  1m29.7s/2m40s  04461.32 iters/s
+
+running (1m30.7s), 0591/0650 VUs, 10425 complete and 0 interrupted iterations
+flash_sale_siege   [  57% ] 0591/0650 VUs  1m30.7s/2m40s  05980.18 iters/s
+
+running (1m31.7s), 0023/0651 VUs, 11607 complete and 0 interrupted iterations
+flash_sale_siege   [  57% ] 0023/0651 VUs  1m31.7s/2m40s  05988.78 iters/s
+
+running (1m32.7s), 0062/0651 VUs, 12578 complete and 0 interrupted iterations
+flash_sale_siege   [  58% ] 0062/0651 VUs  1m32.7s/2m40s  06002.98 iters/s
+
+running (1m33.7s), 0198/0651 VUs, 13085 complete and 0 interrupted iterations
+flash_sale_siege   [  59% ] 0198/0651 VUs  1m33.7s/2m40s  06011.82 iters/s
+
+running (1m34.7s), 0201/0651 VUs, 13899 complete and 0 interrupted iterations
+flash_sale_siege   [  59% ] 0201/0651 VUs  1m34.7s/2m40s  06023.12 iters/s
+
+running (1m35.7s), 0402/0651 VUs, 14871 complete and 0 interrupted iterations
+flash_sale_siege   [  60% ] 0402/0651 VUs  1m35.7s/2m40s  06039.30 iters/s
+
+running (1m36.7s), 0018/0690 VUs, 15793 complete and 0 interrupted iterations
+flash_sale_siege   [  60% ] 0018/0690 VUs  1m36.7s/2m40s  06089.02 iters/s
+
+running (1m37.7s), 0058/0690 VUs, 16675 complete and 0 interrupted iterations
+flash_sale_siege   [  61% ] 0058/0690 VUs  1m37.7s/2m40s  06101.65 iters/s
+
+running (1m38.7s), 0490/0690 VUs, 17621 complete and 0 interrupted iterations
+flash_sale_siege   [  62% ] 0490/0690 VUs  1m38.7s/2m40s  06120.48 iters/s
+
+running (1m39.7s), 0019/0690 VUs, 18927 complete and 0 interrupted iterations
+flash_sale_siege   [  62% ] 0019/0690 VUs  1m39.7s/2m40s  06131.92 iters/s
+
+running (1m40.7s), 0044/0690 VUs, 20024 complete and 0 interrupted iterations
+flash_sale_siege   [  63% ] 0044/0690 VUs  1m40.7s/2m40s  06147.04 iters/s
+
+running (1m41.7s), 0015/0690 VUs, 20990 complete and 0 interrupted iterations
+flash_sale_siege   [  64% ] 0015/0690 VUs  1m41.7s/2m40s  06159.72 iters/s
+
+running (1m42.7s), 0032/0690 VUs, 21973 complete and 0 interrupted iterations
+flash_sale_siege   [  64% ] 0032/0690 VUs  1m42.7s/2m40s  06173.33 iters/s
+
+running (1m43.7s), 0489/0698 VUs, 22847 complete and 0 interrupted iterations
+flash_sale_siege   [  65% ] 0489/0698 VUs  1m43.7s/2m40s  06192.26 iters/s
+
+running (1m44.7s), 0004/0699 VUs, 23917 complete and 0 interrupted iterations
+flash_sale_siege   [  65% ] 0004/0699 VUs  1m44.7s/2m40s  06200.17 iters/s
+
+running (1m45.7s), 0277/0699 VUs, 24870 complete and 0 interrupted iterations
+flash_sale_siege   [  66% ] 0277/0699 VUs  1m45.7s/2m40s  06216.59 iters/s
+
+running (1m46.7s), 0008/0699 VUs, 25920 complete and 0 interrupted iterations
+flash_sale_siege   [  67% ] 0008/0699 VUs  1m46.7s/2m40s  06227.04 iters/s
+
+running (1m47.7s), 0144/0699 VUs, 26750 complete and 0 interrupted iterations
+flash_sale_siege   [  67% ] 0144/0699 VUs  1m47.7s/2m40s  06240.05 iters/s
+
+running (1m48.7s), 0067/0699 VUs, 27871 complete and 0 interrupted iterations
+flash_sale_siege   [  68% ] 0067/0699 VUs  1m48.7s/2m40s  06253.99 iters/s
+
+running (1m49.7s), 0002/0699 VUs, 28757 complete and 0 interrupted iterations
+flash_sale_siege   [  69% ] 0002/0699 VUs  1m49.7s/2m40s  06264.84 iters/s
+
+running (1m50.7s), 0030/0699 VUs, 29960 complete and 0 interrupted iterations
+flash_sale_siege   [  69% ] 0030/0699 VUs  1m50.7s/2m40s  06281.29 iters/s
+
+running (1m51.7s), 0696/0699 VUs, 30463 complete and 0 interrupted iterations
+flash_sale_siege   [  70% ] 0696/0699 VUs  1m51.7s/2m40s  06297.31 iters/s
+
+running (1m52.7s), 0026/0700 VUs, 32138 complete and 0 interrupted iterations
+flash_sale_siege   [  70% ] 0026/0700 VUs  1m52.7s/2m40s  06674.77 iters/s
+
+running (1m53.7s), 0069/0700 VUs, 32896 complete and 0 interrupted iterations
+flash_sale_siege   [  71% ] 0069/0700 VUs  1m53.7s/2m40s  06684.80 iters/s
+
+running (1m54.7s), 0102/0700 VUs, 33223 complete and 0 interrupted iterations
+flash_sale_siege   [  72% ] 0102/0700 VUs  1m54.7s/2m40s  06689.32 iters/s
+
+running (1m55.7s), 0142/0700 VUs, 33317 complete and 0 interrupted iterations
+flash_sale_siege   [  73% ] 0390/0700 VUs  1m57.1s/2m40s  06695.73 iters/s
+
+running (1m57.1s), 0391/0700 VUs, 33445 complete and 0 interrupted iterations
+flash_sale_siege   [  73% ] 0391/0700 VUs  1m57.1s/2m40s  06695.73 iters/s
+
+running (1m57.7s), 0334/0700 VUs, 33585 complete and 0 interrupted iterations
+flash_sale_siege   [  74% ] 0334/0700 VUs  1m57.7s/2m40s  06696.80 iters/s
+
+running (1m58.7s), 0014/0700 VUs, 34103 complete and 0 interrupted iterations
+flash_sale_siege   [  74% ] 0014/0700 VUs  1m58.7s/2m40s  06699.00 iters/s
+
+running (1m59.7s), 0040/0700 VUs, 34357 complete and 0 interrupted iterations
+flash_sale_siege   [  75% ] 0040/0700 VUs  1m59.7s/2m40s  06702.59 iters/s
+
+running (2m00.7s), 0012/0700 VUs, 35160 complete and 0 interrupted iterations
+flash_sale_siege   [  75% ] 0023/0700 VUs  2m00.7s/2m40s  06712.58 iters/s
+
+running (2m01.7s), 0011/0700 VUs, 35869 complete and 0 interrupted iterations
+flash_sale_siege   [  76% ] 0011/0700 VUs  2m01.7s/2m40s  06721.06 iters/s
+
+running (2m02.7s), 0011/0700 VUs, 36045 complete and 0 interrupted iterations
+flash_sale_siege   [  77% ] 0011/0700 VUs  2m02.7s/2m40s  06723.14 iters/s
+
+running (2m03.7s), 0103/0700 VUs, 36410 complete and 0 interrupted iterations
+flash_sale_siege   [  77% ] 0103/0700 VUs  2m03.7s/2m40s  06728.93 iters/s
+
+running (2m04.7s), 0017/0700 VUs, 37312 complete and 0 interrupted iterations
+flash_sale_siege   [  78% ] 0017/0700 VUs  2m04.7s/2m40s  06739.04 iters/s
+
+running (2m05.7s), 0488/0700 VUs, 37699 complete and 0 interrupted iterations
+flash_sale_siege   [  79% ] 0488/0700 VUs  2m05.7s/2m40s  06749.55 iters/s
+
+running (2m06.7s), 0503/0700 VUs, 38587 complete and 0 interrupted iterations
+flash_sale_siege   [  79% ] 0503/0700 VUs  2m06.7s/2m40s  06760.82 iters/s
+
+running (2m07.7s), 0508/0701 VUs, 39122 complete and 0 interrupted iterations
+flash_sale_siege   [  80% ] 0508/0701 VUs  2m07.7s/2m40s  06778.88 iters/s
+
+running (2m08.7s), 0076/0701 VUs, 40407 complete and 0 interrupted iterations
+flash_sale_siege   [  80% ] 0076/0701 VUs  2m08.7s/2m40s  06789.37 iters/s
+
+running (2m09.7s), 0028/0701 VUs, 40962 complete and 0 interrupted iterations
+flash_sale_siege   [  81% ] 0028/0701 VUs  2m09.7s/2m40s  06795.69 iters/s
+
+running (2m10.7s), 0029/0701 VUs, 41898 complete and 0 interrupted iterations
+flash_sale_siege   [  82% ] 0029/0701 VUs  2m10.7s/2m40s  06807.17 iters/s
+
+running (2m11.7s), 0117/0701 VUs, 42832 complete and 0 interrupted iterations
+flash_sale_siege   [  82% ] 0117/0701 VUs  2m11.7s/2m40s  06819.65 iters/s
+
+running (2m12.7s), 0189/0701 VUs, 43411 complete and 0 interrupted iterations
+flash_sale_siege   [  83% ] 0189/0701 VUs  2m12.7s/2m40s  06827.57 iters/s
+
+running (2m13.7s), 0006/0701 VUs, 44537 complete and 0 interrupted iterations
+flash_sale_siege   [  84% ] 0006/0701 VUs  2m13.7s/2m40s  06838.96 iters/s
+
+running (2m14.7s), 0020/0701 VUs, 45178 complete and 0 interrupted iterations
+flash_sale_siege   [  84% ] 0020/0701 VUs  2m14.7s/2m40s  06846.88 iters/s
+
+running (2m15.7s), 0075/0701 VUs, 45629 complete and 0 interrupted iterations
+flash_sale_siege   [  85% ] 0075/0701 VUs  2m15.7s/2m40s  06853.12 iters/s
+
+running (2m16.7s), 0123/0701 VUs, 46442 complete and 0 interrupted iterations
+flash_sale_siege   [  85% ] 0123/0701 VUs  2m16.7s/2m40s  06863.65 iters/s
+
+running (2m17.7s), 0026/0701 VUs, 47166 complete and 0 interrupted iterations
+flash_sale_siege   [  86% ] 0026/0701 VUs  2m17.7s/2m40s  06871.39 iters/s
+
+running (2m18.7s), 0096/0701 VUs, 47875 complete and 0 interrupted iterations
+flash_sale_siege   [  87% ] 0096/0701 VUs  2m18.7s/2m40s  06880.70 iters/s
+
+running (2m19.7s), 0672/0701 VUs, 48734 complete and 0 interrupted iterations
+flash_sale_siege   [  87% ] 0672/0701 VUs  2m19.7s/2m40s  06898.07 iters/s
+
+running (2m20.7s), 0020/0723 VUs, 49589 complete and 0 interrupted iterations
+flash_sale_siege   [  88% ] 0020/0723 VUs  2m20.7s/2m40s  06926.45 iters/s
+
+running (2m21.7s), 0078/0723 VUs, 50642 complete and 0 interrupted iterations
+flash_sale_siege   [  89% ] 0078/0723 VUs  2m21.7s/2m40s  06939.91 iters/s
+
+running (2m22.7s), 0018/0723 VUs, 51369 complete and 0 interrupted iterations
+flash_sale_siege   [  89% ] 0018/0723 VUs  2m22.7s/2m40s  06947.97 iters/s
+
+running (2m23.7s), 0010/0723 VUs, 52110 complete and 0 interrupted iterations
+flash_sale_siege   [  90% ] 0010/0723 VUs  2m23.7s/2m40s  06956.72 iters/s
+
+running (2m24.7s), 0021/0723 VUs, 52757 complete and 0 interrupted iterations
+flash_sale_siege   [  90% ] 0021/0723 VUs  2m24.7s/2m40s  06964.61 iters/s
+
+running (2m25.7s), 0021/0723 VUs, 53223 complete and 0 interrupted iterations
+flash_sale_siege   [  91% ] 0021/0723 VUs  2m25.7s/2m40s  06970.24 iters/s
+
+running (2m26.7s), 0079/0723 VUs, 53690 complete and 0 interrupted iterations
+flash_sale_siege   [  92% ] 0079/0723 VUs  2m26.7s/2m40s  06976.37 iters/s
+
+running (2m27.7s), 0008/0723 VUs, 54540 complete and 0 interrupted iterations
+flash_sale_siege   [  92% ] 0008/0723 VUs  2m27.7s/2m40s  06985.68 iters/s
+
+running (2m28.7s), 0013/0723 VUs, 54978 complete and 0 interrupted iterations
+flash_sale_siege   [  93% ] 0013/0723 VUs  2m28.7s/2m40s  06990.86 iters/s
+
+running (2m29.7s), 0110/0723 VUs, 55669 complete and 0 interrupted iterations
+flash_sale_siege   [  94% ] 0110/0723 VUs  2m29.7s/2m40s  07000.45 iters/s
+
+running (2m30.7s), 0375/0723 VUs, 56237 complete and 0 interrupted iterations
+flash_sale_siege   [  94% ] 0375/0723 VUs  2m30.7s/2m40s  07010.31 iters/s
+
+running (2m31.7s), 0059/0723 VUs, 57014 complete and 0 interrupted iterations
+flash_sale_siege   [  95% ] 0059/0723 VUs  2m31.7s/2m40s  07015.72 iters/s
+
+running (2m32.7s), 0751/0758 VUs, 57161 complete and 0 interrupted iterations
+flash_sale_siege   [  95% ] 0751/0758 VUs  2m32.7s/2m40s  07030.22 iters/s
+
+running (2m33.7s), 0089/0759 VUs, 58277 complete and 0 interrupted iterations
+flash_sale_siege   [  96% ] 0089/0759 VUs  2m33.7s/2m40s  07042.75 iters/s
+
+running (2m34.7s), 0021/0759 VUs, 59248 complete and 0 interrupted iterations
+flash_sale_siege   [  97% ] 0021/0759 VUs  2m34.7s/2m40s  07053.58 iters/s
+
+running (2m35.7s), 0010/0759 VUs, 59953 complete and 0 interrupted iterations
+flash_sale_siege   [  97% ] 0010/0759 VUs  2m35.7s/2m40s  07061.60 iters/s
+
+running (2m36.7s), 0017/0759 VUs, 60706 complete and 0 interrupted iterations
+flash_sale_siege   [  98% ] 0017/0759 VUs  2m36.7s/2m40s  07070.69 iters/s
+
+running (2m37.7s), 0002/0759 VUs, 61685 complete and 0 interrupted iterations
+flash_sale_siege   [  99% ] 0002/0759 VUs  2m37.7s/2m40s  07081.85 iters/s
+
+running (2m38.7s), 0016/0759 VUs, 62343 complete and 0 interrupted iterations
+flash_sale_siege   [  99% ] 0016/0759 VUs  2m38.7s/2m40s  07089.94 iters/s
+
+running (2m39.7s), 0012/0759 VUs, 63248 complete and 0 interrupted iterations
+flash_sale_siege   [ 100% ] 0012/0759 VUs  2m39.7s/2m40s  07100.46 iters/s
+
+
+  █ THRESHOLDS 
+
+    http_req_duration
+    ✗ 'p(95)<200' p(95)=1.7s
+    ✗ 'p(99)<500' p(99)=4.42s
+
+    orders_failed_rate
+    ✓ 'rate<0.05' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 9997    62.461893/s
+    checks_succeeded...: 100.00% 9997 out of 9997
+    checks_failed......: 0.00%   0 out of 9997
+
+    ✓ order accepted (202)
+
+    CUSTOM
+    order_response_time_ms.........: avg=429.394967 min=0        med=78      max=14122 p(90)=1021     p(95)=2071.2
+    orders_failed_rate.............: 0.00%  3 out of 63537
+    orders_out_of_stock_409........: 53537  334.502587/s
+    orders_success_202.............: 9997   62.461893/s
+
+    HTTP
+    http_req_duration..............: avg=359.32ms   min=611.6µs  med=76.57ms max=9.91s p(90)=882.93ms p(95)=1.7s  
+      { expected_response:true }...: avg=1.53s      min=7.84ms   med=1.08s   max=9.91s p(90)=3.57s    p(95)=4.67s 
+    http_req_failed................: 84.26% 53540 out of 63537
+    http_reqs......................: 63537  396.983224/s
+
+    EXECUTION
+    dropped_iterations.............: 190228 1188.556664/s
+    iteration_duration.............: avg=490.75ms   min=715.14µs med=78.48ms max=15.9s p(90)=1.12s    p(95)=2.49s 
+    iterations.....................: 63537  396.983224/s
+    vus............................: 11     min=1              max=752
+    vus_max........................: 759    min=500            max=759
+
+    NETWORK
+    data_received..................: 22 MB  135 kB/s
+    data_sent......................: 16 MB  101 kB/s
+
+
+
+
+running (2m40.0s), 0000/0759 VUs, 63537 complete and 0 interrupted iterations
+flash_sale_siege ✓ [ 100% ] 0000/0759 VUs  2m40s  07103.58 iters/s
+time="2026-09-16T14:15:45Z" level=error msg="thresholds on metrics 'http_req_duration' have been crossed"
+pod "k6-flash-sale-siege" deleted
+pod ecommerce/k6-flash-sale-siege terminated (Error)
