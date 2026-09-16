@@ -98,11 +98,12 @@ battlegrounds/
 
 ## 🚀 TRẠNG THÁI HIỆN TẠI
 - [x] Phê duyệt Kế hoạch Chiến trường (Master Plan)
-- [ ] **BATTLEGROUND 1: High-Throughput E-Commerce Core** (ĐANG TRIỂN KHAI)
-  - [ ] Hiệp 1: Thiết kế Bản vẽ Kiến trúc & ADR
-  - [ ] Hiệp 2: Dựng cụm Hạ tầng Microservices + Kafka + Redis + Postgres Master/Replica
-  - [ ] Hiệp 3: Bắn phá tải cực đại & Phá hủy hệ thống (Red Team Attack)
-  - [ ] Hiệp 4: Kích hoạt lá chắn SRE (Autoscaler, Circuit Breaker, Failover)
-  - [ ] Hiệp 5: Tổng kết Báo cáo & Phỏng vấn Bảo vệ Kiến trúc
-- [ ] **BATTLEGROUND 2: Zero-Trust & Runtime Security Hardening**
+- [x] **BATTLEGROUND 1: High-Throughput E-Commerce Core** (HOÀN THÀNH 100% TRÊN FLOCI CLOUD)
+  - [x] Hiệp 1: Thiết kế Bản vẽ Kiến trúc & ADR (`01-architecture-adr/`)
+  - [x] Hiệp 2: Dựng cụm Hạ tầng Microservices + Kafka + Redis + Postgres Master/Replica (`02-infrastructure-deployment/`)
+  - [x] Hiệp 3: Bắn phá tải cực đại & Phá hủy hệ thống (Red Team Attack - 7,103 RPS, 0 Overselling) (`03-chaos-siege-scripts/`)
+  - [x] Hiệp 4: Kích hoạt lá chắn SRE (KEDA, Singleflight 98% DB Reduction, Circuit Breaker, Failover) (`04-sre-hardening-defense/`)
+  - [x] Hiệp 5: Tổng kết Báo cáo & Phỏng vấn Bảo vệ Kiến trúc (SRE Blameless Post-Mortem & Q&A Drill) (`05-defense-post-mortem/`)
+- [ ] **BATTLEGROUND 2: Zero-Trust & Runtime Security Hardening (Cilium eBPF, Vault, Falco)** (SẴN SÀNG KHỞI TRANH)
 - [ ] **BATTLEGROUND 3: Multi-AZ Disaster Recovery & SRE Reliability Runbook**
+

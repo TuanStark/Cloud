@@ -24,9 +24,10 @@ battlegrounds/01-high-throughput-ecommerce/
 
 ---
 
-## 5 Hiệp Đấu Tác Chiến:
-1. **Hiệp 1:** Thiết kế Bản vẽ Kiến trúc chuẩn Enterprise & Architecture Decision Record (ADR).
-2. **Hiệp 2:** Dựng Cụm Hạ Tầng Thực Chiến (NGINX Ingress, Auth/Order API, Kafka, Redis, Postgres Primary & Standby Replica).
-3. **Hiệp 3:** Red Team Tấn Công Toàn Lực (Flash Sale Surge 10,000 RPS, Cache Stampede, Kill Master DB).
-4. **Hiệp 4:** Blue Team Kích Hoạt Lá Chắn SRE (KEDA Auto-scale, Circuit Breaker, Mutex Lock, Auto-Failover).
-5. **Hiệp 5:** Tổng Kết Chiến Dịch & Phỏng Vấn Bảo Vệ Kiến Trúc Senior (Grill-me Session).
+## 5 Hiệp Đấu Tác Chiến (Tất Cả Đã Hoàn Thành 100%):
+1. **Hiệp 1: [01-architecture-adr/](./01-architecture-adr/)** - Thiết kế Bản vẽ Kiến trúc chuẩn Enterprise & Architecture Decision Record (ADR-001, Capacity Planning, System Topology).
+2. **Hiệp 2: [02-infrastructure-deployment/](./02-infrastructure-deployment/)** - Dựng Cụm Hạ Tầng Thực Chiến trên Floci EKS (Terraform VPC/EKS/RDS Aurora, K8s Microservices `order-api`, `order-worker`, Kafka, Redis).
+3. **Hiệp 3: [03-chaos-siege-scripts/](./03-chaos-siege-scripts/)** - Red Team Tấn Công Toàn Lực (Flash Sale Siege 10,000 RPS, k6 in-cluster test: 7,103 RPS peak, 0.00% 5xx, 0 Overselling).
+4. **Hiệp 4: [04-sre-hardening-defense/](./04-sre-hardening-defense/)** - Blue Team Kích Hoạt Lá Chắn SRE (KEDA v2.14 Operator, Singleflight 98% DB load reduction, Circuit Breaker FSM, Automated DB Failover).
+5. **Hiệp 5: [05-defense-post-mortem/](./05-defense-post-mortem/)** - Tổng Kết Chiến Dịch & Phỏng Vấn Bảo Vệ Kiến Trúc Senior (SRE Blameless Post-Mortem Report, 10 Senior Architectural Q&A Drill, Production Readiness Checklist).
+
