@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ecommerce
+
+resources:
+  - 00-namespace.yaml
+  - 01-serviceaccount-irsa.yaml
+  - 02-configmap-secrets.yaml
+  - 03-redis-deployment.yaml
+  - 04-kafka-deployment.yaml
+  - 05-order-api-deployment.yaml
+  - 06-order-worker-deployment.yaml
+  - 07-ingress-alb.yaml
+  - 08-autoscaling-hpa.yaml
+
+commonLabels:
+  environment: prod
+  managed-by: kustomize
+  project: ecommerce
