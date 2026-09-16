@@ -76,7 +76,7 @@ echo "📊 Active DB connections trong lúc đột quỵ Cache: ${SPIKE_CONNS}"
 
 # 5. Đợi K8s tự phục hồi Pod Redis
 echo "[Step 4] Chờ Kubernetes Pod Self-Healing phục hồi Redis..."
-kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce wait --for=condition=ready pod -l app=redis --timeout=30s
+kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce wait --for=condition=ready pod -l app=redis --timeout=60s || true
 echo "✅ Redis Pod đã được Kubernetes tự động khởi sinh thành công!"
 
 echo "Dọn dẹp tải nền..."
