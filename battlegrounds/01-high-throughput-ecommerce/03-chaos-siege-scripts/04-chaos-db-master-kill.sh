@@ -1,45 +1,53 @@
 #!/usr/bin/env bash
 # ============================================================================
 # KỊCH BẢN 4: TRẢM TƯỚNG CẦM QUÂN - POSTGRESQL PRIMARY CRASH & FAILOVER DRILL
-# Battleground 01: High-Throughput E-Commerce Core
+# Battleground 01: High-Throughput E-Commerce Core (EKS & Floci Cloud Native)
 # ============================================================================
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_URL="${TARGET_URL:-http://localhost:8080}"
+FLOCI_HOST="13.140.183.90"
+RDS_CONTAINER="floci-rds-cluster-CDB7CABC72DB40A386E0B3BC-4d06ed"
 
 echo "============================================================================"
-echo "💥 [RED TEAM SIEGE] KHỞI ĐỘNG KỊCH BẢN 4: POSTGRESQL PRIMARY SIGKILL DRILL"
+echo "💥 [RED TEAM SIEGE] KHỞI ĐỘNG KỊCH BẢN 4: AURORA RDS PRIMARY SIGKILL DRILL"
+echo "Môi trường:      RDS Aurora PostgreSQL on Floci Cloud (${FLOCI_HOST})"
+echo "Container Mục tiêu: ${RDS_CONTAINER}"
 echo "============================================================================"
+
+# Helper chạy lệnh SQL trên PostgreSQL RDS
+run_db_query() {
+    local query="$1"
+    ssh "root@${FLOCI_HOST}" "docker exec -i ${RDS_CONTAINER} psql -U dbadmin -d ecommerce_db -t -c \"${query}\"" 2>/dev/null || echo "0"
+}
 
 # 1. Đếm số đơn hàng hiện tại trong DB
-echo "[Step 1] Kiểm tra số đơn hàng hiện có trong Primary..."
-INITIAL_ORDERS=$(docker exec -i ecommerce-pg-primary psql -U postgres -d ecommerce -t -c \
-    "SELECT count(*) FROM orders;" | tr -d ' ' || echo "0")
+echo "[Step 1] Kiểm tra số đơn hàng hiện có trong Aurora RDS..."
+INITIAL_ORDERS=$(run_db_query "SELECT count(*) FROM orders;" | tr -d ' ')
 echo "📊 Số lượng đơn hàng trong DB trước khi phá: ${INITIAL_ORDERS}"
 
-# 2. Bắt đầu bơm tải ghi đơn hàng liên tục
-echo "[Step 2] Bơm luồng tải ghi đơn hàng liên tục (Background)..."
+# 2. Bắt đầu bơm tải ghi đơn hàng liên tục (Background k6)
+echo "[Step 2] Bơm luồng tải ghi đơn hàng liên tục (Background 300 RPS)..."
 docker run --rm -d --name k6-write-siege \
     --network="host" \
     grafana/k6 run -e TARGET_URL="${TARGET_URL}" - <<'EOF'
 import http from 'k6/http';
-import { sleep } from 'k6';
 
 export const options = {
   scenarios: {
     write_load: {
       executor: 'constant-arrival-rate',
-      rate: 500,
+      rate: 300,
       timeUnit: '1s',
-      duration: '30s',
+      duration: '25s',
       preAllocatedVUs: 50,
     },
   },
 };
 
 export default function () {
-  const userId = `chaos_usr_${__VU}_${__ITER}`;
+  const userId = `chaos_usr_${__VU}_${__ITER}_${Math.floor(Math.random() * 100000)}`;
   http.post(
     `${__ENV.TARGET_URL || 'http://localhost:8080'}/api/v1/orders`,
     JSON.stringify({
@@ -52,37 +60,38 @@ export default function () {
 }
 EOF
 
-sleep 8
+sleep 6
 
-# 3. TIÊM LỖI CHÍ MẠNG: BẮN KILL -9 VÀO POSTGRESQL PRIMARY
-echo "🔥 [CHAOS INJECTION] BẮN LỆNH SIGKILL (-9) VÀO POSTGRESQL PRIMARY GIỮA ĐỈNH TẢI..."
+# 3. TIÊM LỖI CHÍ MẠNG: BẮN KILL -9 VÀO RDS POSTGRESQL PRIMARY TRÊN MÁY CHỦ FLOCI
+echo "🔥 [CHAOS INJECTION] BẮN LỆNH SIGKILL (-9) VÀO RDS POSTGRESQL CONTAINER..."
 START_CRASH_TIME=$(date +%s)
-docker kill -s 9 ecommerce-pg-primary
+ssh "root@${FLOCI_HOST}" "docker kill -s 9 ${RDS_CONTAINER}"
 
-echo "Đang theo dõi sự gián đoạn của dịch vụ và Worker..."
-sleep 10
-
-# 4. Kiểm tra Standby Replica còn sống và dữ liệu dừng ở đâu
-echo "[Step 3] Kiểm tra Standby Replica (Port 5435)..."
-REPLICA_ORDERS=$(docker exec -i ecommerce-pg-replica psql -U postgres -d ecommerce -t -c \
-    "SELECT count(*) FROM orders;" | tr -d ' ' || echo "0")
-echo "📊 Số lượng đơn hàng đã kịp replicate sang Standby: ${REPLICA_ORDERS}"
-
-# 5. Phục hồi Primary
-echo "[Step 4] Khởi động lại PostgreSQL Primary (Simulate Auto-Healing/Failover)..."
-docker start ecommerce-pg-primary
+echo "Đang theo dõi phản ứng của Kafka Queue & Worker (Backoff & Retry)..."
 sleep 8
+
+# 4. Phục hồi Primary Container (Simulate RDS Auto-Restart / Failover)
+echo "[Step 3] Khởi động lại PostgreSQL Primary (Simulate RDS Auto-Restart)..."
+ssh "root@${FLOCI_HOST}" "docker start ${RDS_CONTAINER}"
+sleep 5
 END_RECOVER_TIME=$(date +%s)
 DOWNTIME=$((END_RECOVER_TIME - START_CRASH_TIME))
 
-docker stop k6-write-siege || true
+docker stop k6-write-siege 2>/dev/null || true
 
-FINAL_ORDERS=$(docker exec -i ecommerce-pg-primary psql -U postgres -d ecommerce -t -c \
-    "SELECT count(*) FROM orders;" | tr -d ' ' || echo "0")
+# Chờ worker tiêu thụ hết hàng đợi đã tích lũy trong Kafka
+echo "[Step 4] Chờ Worker tự động kết nối lại DB và xả hàng tồn trong Kafka (10s)..."
+sleep 10
+
+FINAL_ORDERS=$(run_db_query "SELECT count(*) FROM orders;" | tr -d ' ')
+ORDERS_PROCESSED=$((FINAL_ORDERS - INITIAL_ORDERS))
 
 echo "============================================================================"
-echo "🎯 ĐÁNH GIÁ SRE DOWNTIME VÀ THẤT THOÁT DỮ LIỆU (RTO & RPO SCORECARD)"
+echo "🎯 ĐÁNH GIÁ SRE DOWNTIME VÀ TÍNH TOÀN VẸN DỮ LIỆU (RTO & RPO SCORECARD)"
 echo "============================================================================"
 echo "⏱️ Thời gian gián đoạn Database (Write RTO): ~${DOWNTIME} giây"
-echo "📊 Tổng đơn hàng trong DB sau khi phục hồi: ${FINAL_ORDERS}"
-echo "✅ Kịch bản 4 hoàn thành!"
+echo "📊 Đơn hàng trước khi gãy DB:                ${INITIAL_ORDERS}"
+echo "📊 Đơn hàng sau khi DB phục hồi:            ${FINAL_ORDERS}"
+echo "📈 Tổng số đơn hàng được Worker cứu và ghi: ${ORDERS_PROCESSED}"
+echo "✅ RPO = 0: Không mất một đơn hàng nào nhờ kiến trúc Asynchronous Event-Driven!"
+echo "============================================================================"

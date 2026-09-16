@@ -6,62 +6,74 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-FLOCI_ENDPOINT="${FLOCI_ENDPOINT:-https://chungkhoanai.dpdns.org/}"
+FLOCI_HOST="${FLOCI_HOST:-13.140.183.90}"
 CLUSTER_NAME="${CLUSTER_NAME:-ecommerce-prod-eks}"
 AWS_REGION="${AWS_REGION:-us-east-1}"
 KUBECONFIG_PATH="${KUBECONFIG_PATH:-${HOME}/.kube/floci-config}"
 
 echo "============================================================================"
 echo "☸️ [FLOCI EKS DEPLOYMENT] BẮT ĐẦU TRIỂN KHAI TOÀN BỘ MICROSERVICES LÊN EKS"
-echo "Floci Endpoint: ${FLOCI_ENDPOINT}"
+echo "Floci Host:     ${FLOCI_HOST}"
 echo "EKS Cluster:    ${CLUSTER_NAME}"
 echo "Kubeconfig:     ${KUBECONFIG_PATH}"
 echo "============================================================================"
 
-# 1. Cấu hình Kubeconfig từ Floci EKS API
-echo "[Step 1] Đang lấy thông tin xác thực Kubeconfig từ Floci..."
+# 1. Kiểm tra / Tự động cấu hình Kubeconfig
+echo "[Step 1] Xác thực cấu hình Kubeconfig..."
 mkdir -p "$(dirname "${KUBECONFIG_PATH}")"
 
-export AWS_ACCESS_KEY_ID=test
-export AWS_SECRET_ACCESS_KEY=test
-export AWS_DEFAULT_REGION="${AWS_REGION}"
+NEEDS_CONFIG=false
+if [ ! -f "${KUBECONFIG_PATH}" ]; then
+    NEEDS_CONFIG=true
+elif ! kubectl --kubeconfig="${KUBECONFIG_PATH}" cluster-info --request-timeout=20s &>/dev/null; then
+    echo "⚠️ Kubeconfig hiện tại chưa kết nối được, tiến hành làm mới..."
+    NEEDS_CONFIG=true
+fi
 
-aws --endpoint-url "${FLOCI_ENDPOINT}" eks update-kubeconfig \
-    --name "${CLUSTER_NAME}" \
-    --kubeconfig "${KUBECONFIG_PATH}"
-
-EKS_ENDPOINT=$(aws --endpoint-url "${FLOCI_ENDPOINT}" eks describe-cluster --name "${CLUSTER_NAME}" --query "cluster.endpoint" --output text 2>/dev/null || echo "https://localhost:6500")
-EKS_PORT=$(echo "${EKS_ENDPOINT}" | grep -oE '[0-9]+$' || echo "6500")
-
-echo "✅ Đã lưu Kubeconfig vào: ${KUBECONFIG_PATH}"
-echo "📍 EKS Cluster Endpoint: ${EKS_ENDPOINT} (Port: ${EKS_PORT})"
+if [ "${NEEDS_CONFIG}" = true ]; then
+    echo "🔄 Đang lấy Kubeconfig từ container k3s trên Floci Host (${FLOCI_HOST})..."
+    if ssh -o BatchMode=yes -o ConnectTimeout=8 "root@${FLOCI_HOST}" "test -e /etc/rancher/k3s/k3s.yaml || docker exec floci-eks-${CLUSTER_NAME} test -e /etc/rancher/k3s/k3s.yaml" 2>/dev/null; then
+        ssh "root@${FLOCI_HOST}" "docker exec floci-eks-${CLUSTER_NAME} cat /etc/rancher/k3s/k3s.yaml" \
+            | sed "s/127.0.0.1/${FLOCI_HOST}/" \
+            | sed "s/localhost/${FLOCI_HOST}/" \
+            | sed "s/6443/6500/" > "${KUBECONFIG_PATH}"
+        kubectl --kubeconfig="${KUBECONFIG_PATH}" config set-cluster default --insecure-skip-tls-verify=true >/dev/null 2>&1 || true
+        chmod 600 "${KUBECONFIG_PATH}"
+        echo "✅ Đã trích xuất và lưu Kubeconfig thành công!"
+    else
+        echo "ℹ️ Thử lấy qua AWS EKS API..."
+        export AWS_ACCESS_KEY_ID=test
+        export AWS_SECRET_ACCESS_KEY=test
+        export AWS_DEFAULT_REGION="${AWS_REGION}"
+        FLOCI_API_URL="http://${FLOCI_HOST}:4566"
+        aws --endpoint-url "${FLOCI_API_URL}" eks update-kubeconfig \
+            --name "${CLUSTER_NAME}" \
+            --kubeconfig "${KUBECONFIG_PATH}" 2>/dev/null || true
+    fi
+fi
 
 # 2. Kiểm tra khả năng kết nối tới Kubernetes API Server
 echo "[Step 2] Kiểm tra kết nối tới Kubernetes Control Plane..."
-if ! kubectl --kubeconfig="${KUBECONFIG_PATH}" cluster-info --request-timeout=4s 2>/dev/null; then
-    echo "⚠️ CẢNH BÁO KẾT NỐI: Chưa thể chạm trực tiếp vào API Server của EKS trên Floci."
-    echo "Lý do: Floci trả về endpoint nội bộ '${EKS_ENDPOINT}' (chỉ chạy trong mạng máy chủ Floci)."
-    echo "👉 Để kết nối trực tiếp, vui lòng mở SSH tunnel sang máy chủ Floci:"
-    echo "   ssh -L ${EKS_PORT}:localhost:${EKS_PORT} root@chungkhoanai.dpdns.org"
-    echo "Sau khi mở tunnel, chạy lại script này để apply lên cụm."
-    echo ""
-    echo "🔍 Tiến hành kiểm tra cú pháp và tính hợp lệ của toàn bộ manifests bằng Kustomize:"
-    kubectl kustomize "${SCRIPT_DIR}" > /dev/null
-    echo "✅ Toàn bộ Kubernetes Manifests hợp lệ 100% theo tiêu chuẩn EKS v1.30!"
-    exit 0
+if ! kubectl --kubeconfig="${KUBECONFIG_PATH}" cluster-info --request-timeout=20s; then
+    echo "❌ LỖI: Chưa thể kết nối tới API Server của EKS trên Floci (${FLOCI_HOST}:6500)."
+    exit 1
 fi
+echo "✅ Kết nối tới EKS Control Plane thành công!"
 
 # 3. Apply toàn bộ manifests qua Kustomize
 echo "[Step 3] Áp dụng toàn bộ manifests lên cụm EKS (Namespace 'ecommerce')..."
 kubectl --kubeconfig="${KUBECONFIG_PATH}" apply -k "${SCRIPT_DIR}"
 
 # 4. Kiểm tra trạng thái triển khai
-echo "[Step 4] Kiểm tra tài nguyên đã khởi tạo:"
+echo "[Step 4] Kiểm tra trạng thái tài nguyên đã khởi tạo:"
 echo "--- Danh sách Pods ---"
-kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce get pods -o wide || true
+kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce get pods -o wide
 
 echo "--- Danh sách Services ---"
-kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce get svc -o wide || true
+kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce get svc -o wide
+
+echo "--- Danh sách HPA ---"
+kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce get hpa -o wide || true
 
 echo "--- Ingress ALB ---"
 kubectl --kubeconfig="${KUBECONFIG_PATH}" -n ecommerce get ingress -o wide || true
